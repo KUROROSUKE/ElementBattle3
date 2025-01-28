@@ -8,7 +8,7 @@ const WIN_TURN = 10
 
 let droped_cards_p1 = []; let droped_cards_p2 = []
 
-let turn = "p1"
+let turn = "p2"
 let time = "game"
 let numTurn = 1
 
