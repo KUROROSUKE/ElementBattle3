@@ -58,7 +58,7 @@ async function view_p2_hand() {
                 if (time == "game") {
                     droped_cards_p2.push(this.alt)
                     const img = document.createElement("img")
-                    img.alt = elem
+                    img.alt = this.alt
                     img.src=`../images/${elementToNumber[elem]}.png`
                     img.style.width = `${WindowSize/24}px`
                     img.style.border = "1px solid #000"
