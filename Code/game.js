@@ -76,6 +76,7 @@ async function view_p2_hand() {
                     console.log(p2_hand)
                     p2_hand[this.name] = newElem
                     console.log(newElem)
+                    console.log(p2_hand)
                     turn = "p1"
                     setTimeout(() => {p1_exchange()},500)
                 }
