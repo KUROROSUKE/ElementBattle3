@@ -59,7 +59,7 @@ async function view_p2_hand() {
                     droped_cards_p2.push(this.alt)
                     const img = document.createElement("img")
                     img.alt = this.alt
-                    img.src=`../images/${elementToNumber[elem]}.png`
+                    img.src=`../images/${elementToNumber[this.alt]}.png`
                     img.style.width = `${WindowSize/24}px`
                     img.style.border = "1px solid #000"
                     document.getElementById("droped_area_p2").appendChild(img)
