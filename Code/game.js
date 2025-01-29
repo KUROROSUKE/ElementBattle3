@@ -37,7 +37,7 @@ async function view_p2_hand() {
         image.src = `../images/${elementToNumber[elem]}.png`
         image.name = index
         image.alt = elem
-        image.style.width = `${WindowSize/12}px`
+        image.style.width = `${-10+WindowSize/12}px`
         image.style.padding = "10px"
         image.style.margin = "5px"
         image.style.border = "1px solid #000"
@@ -61,7 +61,7 @@ async function view_p2_hand() {
                     console.log(this.alt)
                     img.alt = this.alt
                     img.src=`../images/${elementToNumber[this.alt]}.png`
-                    img.style.width = `${WindowSize/24}px`
+                    img.style.width = `${-10+WindowSize/24}px`
                     img.style.border = "1px solid #000"
                     document.getElementById("droped_area_p2").appendChild(img)
                     this.classList.remove("selected")
@@ -70,7 +70,7 @@ async function view_p2_hand() {
                     this.src = `../images/${elementToNumber[newElem]}.png`
                     document.getElementById("p1_explain").innerHTML = `newElem:${this.newElem}, index: ${index}`
                     this.alt = newElem
-                    this.style.width = `${WindowSize/12}px`
+                    this.style.width = `${-10+WindowSize/12}px`
                     this.style.padding = "10px"
                     this.style.margin = "5px"
                     this.style.border = "1px solid #000"
@@ -92,7 +92,7 @@ async function view_p1_hand() {
         const image = document.createElement("img")
         image.src = `../images/0.png`
         image.alt = elem
-        image.style.width = `${WindowSize/12}px`
+        image.style.width = `${-10+WindowSize/12}px`
         image.style.padding = "10px"
         image.style.margin = "5px"
         image.style.border = "1px solid #000"
