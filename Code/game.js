@@ -58,6 +58,7 @@ async function view_p2_hand() {
                 if (time == "game") {
                     droped_cards_p2.push(this.alt)
                     const img = document.createElement("img")
+                    console.log(this.alt)
                     img.alt = this.alt
                     img.src=`../images/${elementToNumber[this.alt]}.png`
                     img.style.width = `${WindowSize/24}px`
@@ -75,7 +76,6 @@ async function view_p2_hand() {
                     this.style.border = "1px solid #000"
                     console.log(p2_hand)
                     p2_hand[this.name] = newElem
-                    console.log(newElem)
                     console.log(p2_hand)
                     turn = "p1"
                     setTimeout(() => {p1_exchange()},500)
@@ -221,7 +221,6 @@ async function p1_exchange() {
     }
     // Select a new random element and replace the target card
     const newElem = elements[Math.floor(Math.random() * elements.length)]
-    //console.log("New element:", newElem)
     p1_hand[targetElem] = newElem
     // Update the image element's appearance
     img.src = `../images/0.png`
