@@ -73,7 +73,9 @@ async function view_p2_hand() {
                     this.style.padding = "10px"
                     this.style.margin = "5px"
                     this.style.border = "1px solid #000"
+                    console.log(p2_hand)
                     p2_hand[this.name] = newElem
+                    console.log(newElem)
                     turn = "p1"
                     setTimeout(() => {p1_exchange()},500)
                 }
