@@ -119,6 +119,7 @@ async function search(components) {
 }
 
 document.getElementById("done_button").addEventListener("click", function () {
+    console.log("run")
     if (turn == "p1") {
         time = "make"
         done()
