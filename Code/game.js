@@ -66,6 +66,7 @@ async function view_p2_hand() {
                     this.classList.add("selected")
                     let newElem = elements[Math.round(Math.random()*elements.length)]
                     this.src = `../images/${elementToNumber[newElem]}.png`
+                    document.getElementById("p1_explain").innerHTML = `newElem:${this.newElem}, index: ${index}`
                     this.alt = newElem
                     this.style.width = `${WindowSize/12}px`
                     this.style.padding = "10px"
