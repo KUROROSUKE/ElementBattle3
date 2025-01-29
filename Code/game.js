@@ -12,10 +12,13 @@ let turn = "p1"
 let time = "game"
 let numTurn = 1
 
+let collectedData = []
+
 const WindowSize = window.innerWidth
 const elementToNumber = {"H": 1, "He": 2, "Li": 3, "Be": 4, "B": 5, "C": 6, "N": 7, "O": 8, "F": 9, "Ne": 10,"Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Cl": 17, "Ar": 18, "K": 19, "Ca": 20,"Fe": 26, "Cu": 29, "Zn": 30, "I": 53}
-const elements = [...Array(30).fill('H'), ...Array(25).fill('O'), ...Array(20).fill('C'),'He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
+const elements = [...Array(15).fill('H'), ...Array(10).fill('O'), ...Array(10).fill('C'),'He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
 const element = ['H','O','C','He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
+let deck = [...elements, ...elements]
 
 //　load materials
 async function loadMaterials() {
@@ -60,10 +63,11 @@ async function view_p2_hand() {
                 img.src=`../images/${elementToNumber[this.alt]}.png`
                 img.style.width = `${WindowSize/24}px`
                 img.style.border = "1px solid #000"
+                recordGameData(0,this.alt)
                 document.getElementById("droped_area_p2").appendChild(img)
                 this.classList.remove("selected")
                 this.classList.add("selected")
-                let newElem = elements[Math.floor(Math.random()*(elements.length-1))]
+                let newElem = drawCard()
                 this.src = `../images/${elementToNumber[newElem]}.png`
                 this.alt = newElem
                 this.style.width = `${WindowSize/12}px`
@@ -140,6 +144,7 @@ async function get_dora() {
 async function done() {
     const p2_make_material = await p2_make()
     const p1_make_material = await p1_make()
+    recordGameData(1,p2_make_material[0].components)
     console.log(p2_make_material[0])
     dora = await get_dora()
     console.log(`dora: ${dora}`)
@@ -208,7 +213,7 @@ async function p1_exchange() {
         return
     }
     // Select a new random element and replace the target card
-    const newElem = elements[Math.floor(Math.random() * (elements.length-1))]
+    const newElem = drawCard()
     p1_hand[targetElem] = newElem
     // Update the image element's appearance
     img.src = `../images/0.png`
@@ -239,14 +244,26 @@ function arrayToObj(array) {
     return result
 }
 
-function objToArray(obj) {
-    let result = []
-    for (const [key, value] of Object.entries(obj)) {
-        for (let i = 0; i < value; i++) {
-            result.push(key)
-        }
+function shuffle(array) {
+    let currentIndex = array.length;
+  
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element...
+      let randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
     }
-    return result
+
+    return array
+}
+
+function drawCard() {
+    return deck.length > 0 ? deck.pop() : null
 }
 
 async function search_materials(components) {
@@ -262,9 +279,9 @@ async function search_materials(components) {
 } // この関数は特徴量として使えそうかも
 
 function random_hand() {
-    for (let i=0;i<card_num;i++){
-        p1_hand.push(elements[Math.round(Math.random()*95)])
-        p2_hand.push(elements[Math.round(Math.random()*95)])
+    for (let i = 0; i < card_num; i++) {
+        p1_hand.push(drawCard())
+        p2_hand.push(drawCard())
     }
 }
 
@@ -293,15 +310,49 @@ function resetGame() {
     document.getElementById("generate_button").style.display = "inline"
     document.getElementById("done_button").style.display = "none"
     document.getElementById("nextButton").style.display = "none"
+    deck = [...elements, ...elements]
+    deck = shuffle(deck)
     random_hand()
     view_p1_hand()
     view_p2_hand()
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    deck = [...elements, ...elements]
+    deck = shuffle(deck)
     random_hand()
     view_p1_hand()
     view_p2_hand()
     turn = Math.random()>=0.5 ? "p1" : "p2"
     if (turn == "p1") { p1_exchange()}
+})
+
+function recordGameData(action,cards) {
+    const dataEntry = {
+        turn: numTurn,
+        p2_hand: [...p2_hand],
+        droped_cards_p1: [...droped_cards_p1],
+        droped_cards_p2: [...droped_cards_p2],
+        p1_point: p1_point,
+        p2_point: p2_point,
+        select_card: cards,
+        action: action // 0: 交換, 1: 生成
+    }
+    collectedData.push(dataEntry)
+}
+
+function downloadGameData() {
+    const jsonData = JSON.stringify(collectedData, null, 2)
+    const blob = new Blob([jsonData], { type: "application/json" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "1.json"
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+}
+
+document.getElementById("dataDownload").addEventListener("click", function () {
+    downloadGameData()
 })
