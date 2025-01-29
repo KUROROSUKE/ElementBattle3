@@ -220,7 +220,7 @@ async function p1_exchange() {
     }
     // Select a new random element and replace the target card
     const newElem = elements[Math.floor(Math.random() * elements.length)]
-    console.log("New element:", newElem)
+    //console.log("New element:", newElem)
     p1_hand[targetElem] = newElem
     // Update the image element's appearance
     img.src = `../images/0.png`
