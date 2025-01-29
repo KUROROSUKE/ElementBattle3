@@ -35,6 +35,7 @@ async function view_p2_hand() {
     p2_hand.forEach((elem, index) => {
         const image = document.createElement("img")
         image.src = `../images/${elementToNumber[elem]}.png`
+        image.name = index
         image.alt = elem
         image.style.width = `${WindowSize/12}px`
         image.style.padding = "10px"
@@ -72,7 +73,7 @@ async function view_p2_hand() {
                     this.style.padding = "10px"
                     this.style.margin = "5px"
                     this.style.border = "1px solid #000"
-                    p2_hand[index] = newElem
+                    p2_hand[this.name] = newElem
                     turn = "p1"
                     setTimeout(() => {p1_exchange()},500)
                 }
