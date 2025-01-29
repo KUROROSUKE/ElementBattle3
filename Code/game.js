@@ -136,16 +136,9 @@ async function p1_make() {
 
 async function p2_make() {
     console.log("P1はアガるための元素を選んでください。")
-
-    // ボタンを作成
-    const button = document.createElement("button")
-    button.id = "generate_button"
-    button.textContent = "Generate"
-    document.body.appendChild(button)
-
     // ボタンクリックを待機
     return new Promise((resolve) => {
-        button.addEventListener("click", function () {
+        document.getElementById("done_button").addEventListener("click", function () {
             const p1_make_material = search(arrayToObj(p1_selected_card))
             console.log(p1_make_material)
             resolve(p1_make_material) // ボタンクリック後にデータを返す
