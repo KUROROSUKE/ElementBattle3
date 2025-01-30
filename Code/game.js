@@ -141,7 +141,7 @@ async function get_dora() {
     return element[Math.round(Math.random()*23)]
 }
 
-async function done() {
+async function done(who) {
     const p2_make_material = await p2_make()
     const p1_make_material = await p1_make()
     recordGameData(1,p2_make_material[0].components)
@@ -162,11 +162,14 @@ async function done() {
     } else if (Boolean(Object.keys(p1_make_material.components).includes(dora))) {
         thisGame_p1_point = thisGame_p1_point*1.5
     }
+    who=="p2" ? thisGame_p2_point=thisGame_p2_point/2 : thisGame_p1_point=thisGame_p1_point/2
     // after multipulication, the value often float number, so round to integer.
-    p2_point += Math.round(thisGame_p2_point)
-    p1_point += Math.round(thisGame_p1_point)
-    document.getElementById("p2_point").innerHTML = `ポイント：${p2_point}`
-    document.getElementById("p1_point").innerHTML = `ポイント：${p1_point}`
+    thisGame_p2_point = Math.round(thisGame_p2_point)
+    thisGame_p1_point = Math.round(thisGame_p1_point)
+    p1_point += thisGame_p1_point
+    p2_point += thisGame_p2_point 
+    document.getElementById("p2_point").innerHTML += `+${thisGame_p2_point}`
+    document.getElementById("p1_point").innerHTML += `+${thisGame_p1_point}`
     document.getElementById("p2_explain").innerHTML = `生成物質：${p2_make_material[0].name}`
     document.getElementById("p1_explain").innerHTML = `生成物質：${p1_make_material.name}`
     // win check.
@@ -295,9 +298,9 @@ document.getElementById("generate_button").addEventListener("click", function ()
 function resetGame() {
     p1_hand = []; p2_hand = []; droped_cards_p1 = []; droped_cards_p2 = []; p1_selected_card = []; p2_selected_card = []
     time = "game"
-    document.getElementById("p1_point").innerHTML = "ポイント："
+    document.getElementById("p1_point").innerHTML = `ポイント：${p1_point}`
     document.getElementById("p1_explain").innerHTML = "　"
-    document.getElementById("p2_point").innerHTML = "ポイント："
+    document.getElementById("p2_point").innerHTML = `ポイント：${p2_point}`
     document.getElementById("p2_explain").innerHTML = "　"
     let p1_hand_element = document.getElementById("p1_hand")
     while (p1_hand_element.firstChild) {p1_hand_element.removeChild(p1_hand_element.firstChild)}
