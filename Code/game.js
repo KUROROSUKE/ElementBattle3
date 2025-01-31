@@ -318,6 +318,7 @@ function resetGame() {
     deck = [...elements, ...elements]
     deck = shuffle(deck)
     document.getElementById("rate").innerHTML = `レート：${rate}`
+    console.log(rate)
     random_hand()
     view_p1_hand()
     view_p2_hand()
@@ -328,6 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
     deck = shuffle(deck)
     var rate = localStorage.getItem('rate')
     document.getElementById("rate").innerHTML = `レート：${rate}`
+    console.log(rate)
     random_hand()
     view_p1_hand()
     view_p2_hand()
