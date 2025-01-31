@@ -6,13 +6,14 @@ const card_num = 8
 const WIN_POINT = card_num*30+10
 const WIN_TURN = 10
 
-let droped_cards_p1 = []; let droped_cards_p2 = []
+let dropped_cards_p1 = []; let dropped_cards_p2 = []
 
 let turn = "p1"
 let time = "game"
 let numTurn = 1
 
 let collectedData = []
+var rate = 0
 
 const WindowSize = window.innerWidth
 const elementToNumber = {"H": 1, "He": 2, "Li": 3, "Be": 4, "B": 5, "C": 6, "N": 7, "O": 8, "F": 9, "Ne": 10,"Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Cl": 17, "Ar": 18, "K": 19, "Ca": 20,"Fe": 26, "Cu": 29, "Zn": 30, "I": 53}
@@ -57,14 +58,14 @@ async function view_p2_hand() {
                     p2_selected_card.push(this.alt)
                 }}
             if (turn == "p2" && time == "game") {
-                droped_cards_p2.push(this.alt)
+                dropped_cards_p2.push(this.alt)
                 const img = document.createElement("img")
                 img.alt = this.alt
                 img.src=`../images/${elementToNumber[this.alt]}.png`
                 img.style.width = `${WindowSize/24}px`
                 img.style.border = "1px solid #000"
                 recordGameData(0,this.alt)
-                document.getElementById("droped_area_p2").appendChild(img)
+                document.getElementById("dropped_area_p2").appendChild(img)
                 this.classList.remove("selected")
                 this.classList.add("selected")
                 let newElem = drawCard()
@@ -120,7 +121,12 @@ async function p1_make() {
     //FIXME:ここに上がるための元素を選択するコードを実装（相手の元素の読みなどを含めて）
 
     //return [返す元素のデータ]
-    return materials.then(array => {return array[1]})
+    //TODO: とりあえず最もポイントが高い元素を利用する / from AI.js
+    const makeable_material = await search_materials(arrayToObj(p1_hand))
+    makeable_material.sort((a,b) => b.point - a.point)
+    console.log(makeable_material)
+    return makeable_material
+    //return materials.then(array => {return array[1]})
 }
 
 async function p2_make() {
@@ -149,29 +155,29 @@ async function done(who) {
     dora = await get_dora()
     console.log(`dora: ${dora}`)
     let thisGame_p2_point = p2_make_material[0].point
-    let thisGame_p1_point = p1_make_material.point
+    let thisGame_p1_point = p1_make_material[0].point
     // if you're material has advantage, you get more point
-    if (Boolean(p2_make_material[0].advantageous.includes(p1_make_material.formula))) {
+    if (Boolean(p2_make_material[0].advantageous.includes(p1_make_material[0].formula))) {
         thisGame_p2_point = thisGame_p2_point*(1.5+Math.random()/2)
-    } else if (Boolean(p1_make_material.advantageous.includes(p2_make_material[0].formula))) {
+    } else if (Boolean(p1_make_material[0].advantageous.includes(p2_make_material[0].formula))) {
         thisGame_p1_point = thisGame_p1_point*(1.5+Math.random()/2)
     }
     // if you're material's elements include dora, you get more point
     if (Boolean(Object.keys(p2_make_material[0].components).includes(dora))) {
         thisGame_p2_point = thisGame_p2_point*1.5
-    } else if (Boolean(Object.keys(p1_make_material.components).includes(dora))) {
+    } else if (Boolean(Object.keys(p1_make_material[0].components).includes(dora))) {
         thisGame_p1_point = thisGame_p1_point*1.5
     }
-    who=="p2" ? thisGame_p2_point=thisGame_p2_point/2 : thisGame_p1_point=thisGame_p1_point/2
-    // after multipulication, the value often float number, so round to integer.
+    who=="p2" ?  thisGame_p2_point=thisGame_p2_point/2 : thisGame_p1_point=thisGame_p1_point/2
+    // after multiplication, the value often float number, so round to integer.
     thisGame_p2_point = Math.round(thisGame_p2_point)
     thisGame_p1_point = Math.round(thisGame_p1_point)
     p1_point += thisGame_p1_point
-    p2_point += thisGame_p2_point 
+    p2_point += thisGame_p2_point
     document.getElementById("p2_point").innerHTML += `+${thisGame_p2_point}`
     document.getElementById("p1_point").innerHTML += `+${thisGame_p1_point}`
     document.getElementById("p2_explain").innerHTML = `生成物質：${p2_make_material[0].name}`
-    document.getElementById("p1_explain").innerHTML = `生成物質：${p1_make_material.name}`
+    document.getElementById("p1_explain").innerHTML = `生成物質：${p1_make_material[0].name}`
     // win check.
     winner = await win_check()
     console.log(`winner: ${winner} (if no winner, then this properties are show "null".)`)
@@ -186,9 +192,11 @@ async function done(who) {
     } else {
         console.log("ゲーム終了")
         button.textContent = "ラウンド終了"
-        rate += Math.floor(Math.random()*10)
-        localStorage.setItem('rate',rate)
-        button.addEventListener("click", function () {localStorage.setItem('rate', rate)})
+        button.addEventListener("click", function () {
+            localStorage.setItem("rate",`${rate+10}`)
+            p1_point=0;p2_point=0;numTurn=0
+            resetGame()
+        })
     }
 }
 
@@ -198,19 +206,19 @@ async function win_check() {
 
 async function p1_exchange() {
     // Select a random card index from p1_hand
-    const targetElem = Math.floor(Math.random() * p1_hand.length)
-    droped_cards_p1.push(p1_hand[targetElem])
+    const targetElem = Math.floor(Math.random() * p1_hand.length) // TODO: from AI.js
+    dropped_cards_p1.push(p1_hand[targetElem])
     // Ensure the target card exists and is valid
     if (!p1_hand[targetElem]) {
         console.error("Invalid target element in p1_hand.")
         return
     }
     // Create a new image for the dropped card area
-    const newimg = document.createElement("img")
-    newimg.src = `../images/${elementToNumber[p1_hand[targetElem]]}.png`
-    newimg.style.width = `${WindowSize / 24}px`
-    newimg.style.border = "1px solid #000"
-    document.getElementById("droped_area_p1").appendChild(newimg)
+    const newImg = document.createElement("img")
+    newImg.src = `../images/${elementToNumber[p1_hand[targetElem]]}.png`
+    newImg.style.width = `${WindowSize / 24}px`
+    newImg.style.border = "1px solid #000"
+    document.getElementById("dropped_area_p1").appendChild(newImg)
     // Update the player's hand with a new element
     const img = document.querySelectorAll("#p1_hand img")[targetElem]
     if (!img) {
@@ -268,7 +276,7 @@ function shuffle(array) {
 }
 
 function drawCard() {
-    return deck.length > 0 ? deck.pop() : null
+    return deck.length > 0 ? deck.pop() : done("no-draw")
 }
 
 async function search_materials(components) {
@@ -298,7 +306,7 @@ document.getElementById("generate_button").addEventListener("click", function ()
 })
 
 function resetGame() {
-    p1_hand = []; p2_hand = []; droped_cards_p1 = []; droped_cards_p2 = []; p1_selected_card = []; p2_selected_card = []
+    p1_hand = []; p2_hand = []; dropped_cards_p1 = []; dropped_cards_p2 = []; p1_selected_card = []; p2_selected_card = []
     time = "game"
     document.getElementById("p1_point").innerHTML = `ポイント：${p1_point}`
     document.getElementById("p1_explain").innerHTML = "　"
@@ -306,19 +314,18 @@ function resetGame() {
     document.getElementById("p2_explain").innerHTML = "　"
     let p1_hand_element = document.getElementById("p1_hand")
     while (p1_hand_element.firstChild) {p1_hand_element.removeChild(p1_hand_element.firstChild)}
-    let droped_area_p1_element = document.getElementById("droped_area_p1")
-    while (droped_area_p1_element.firstChild) {droped_area_p1_element.removeChild(droped_area_p1_element.firstChild)}
+    let dropped_area_p1_element = document.getElementById("dropped_area_p1")
+    while (dropped_area_p1_element.firstChild) {dropped_area_p1_element.removeChild(dropped_area_p1_element.firstChild)}
     let p2_hand_element = document.getElementById("p2_hand")
     while (p2_hand_element.firstChild) {p2_hand_element.removeChild(p2_hand_element.firstChild)}
-    let droped_area_p2_element = document.getElementById("droped_area_p2")
-    while (droped_area_p2_element.firstChild) {droped_area_p2_element.removeChild(droped_area_p2_element.firstChild)}
+    let dropped_area_p2_element = document.getElementById("dropped_area_p2")
+    while (dropped_area_p2_element.firstChild) {dropped_area_p2_element.removeChild(dropped_area_p2_element.firstChild)}
     document.getElementById("generate_button").style.display = "inline"
     document.getElementById("done_button").style.display = "none"
     document.getElementById("nextButton").style.display = "none"
     deck = [...elements, ...elements]
     deck = shuffle(deck)
-    document.getElementById("rate").innerHTML = `レート：${rate}`
-    console.log(rate)
+    document.getElementById("rate_area").innerHTML = `レート：${rate}`
     random_hand()
     view_p1_hand()
     view_p2_hand()
@@ -327,9 +334,12 @@ function resetGame() {
 document.addEventListener('DOMContentLoaded', function () {
     deck = [...elements, ...elements]
     deck = shuffle(deck)
-    var rate = localStorage.getItem('rate')
-    document.getElementById("rate").innerHTML = `レート：${rate}`
-    console.log(rate)
+    try {
+        rate = Number(localStorage.getItem("rate"))
+    } catch {
+        rate = 0
+    }
+    document.getElementById("rate_area").innerHTML = `レート：${rate}`
     random_hand()
     view_p1_hand()
     view_p2_hand()
@@ -341,11 +351,12 @@ function recordGameData(action,cards) {
     const dataEntry = {
         turn: numTurn,
         p2_hand: [...p2_hand],
-        droped_cards_p1: [...droped_cards_p1],
-        droped_cards_p2: [...droped_cards_p2],
+        dropped_cards_p1: [...dropped_cards_p1],
+        dropped_cards_p2: [...dropped_cards_p2],
         p1_point: p1_point,
         p2_point: p2_point,
         select_card: cards,
+        rate:rate,
         action: action // 0: 交換, 1: 生成
     }
     collectedData.push(dataEntry)
