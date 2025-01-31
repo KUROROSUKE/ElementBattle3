@@ -291,7 +291,7 @@ function random_hand() {
 document.getElementById("generate_button").addEventListener("click", function () {
     if (turn == "p2") {
         time = "make"
-        done()
+        done("p2")
     }
 })
 
