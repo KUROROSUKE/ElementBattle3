@@ -23,6 +23,11 @@
         #done_button {
             display: none;
         }
+        .drop_area {
+            left:200px;
+            position:relative;
+            width: 500px;
+        }
     </style>
 </head>
 <body>
@@ -31,9 +36,9 @@
         <p id="p1_explain">　</p>
         <div id="p1_hand"></div>
     </div>
-    <div id="dropped_area_p1"></div>
-    <li></li>
-    <div id="dropped_area_p2"></div>
+    <div id="dropped_area_p1" class="drop_area"></div>
+    <hr style="border: 2px solid black; margin: 20px 0;">
+    <div id="dropped_area_p2" class="drop_area"></div>
     <div id="p2_area">
         <div id="p2_hand"></div>
         <p id="p2_point">ポイント：0</p>
