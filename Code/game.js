@@ -186,7 +186,9 @@ async function done(who) {
     } else {
         console.log("ゲーム終了")
         button.textContent = "ラウンド終了"
-        button.addEventListener("click", function () {console.log("ラウンド終了")})
+        rate += Math.floor(Math.random()*10))
+        localStorage.setItem('rate',rate)
+        button.addEventListener("click", function () {localStorage.setItem('rate', rate)})
     }
 }
 
@@ -315,6 +317,7 @@ function resetGame() {
     document.getElementById("nextButton").style.display = "none"
     deck = [...elements, ...elements]
     deck = shuffle(deck)
+    document.getElementById("rate").innerHTML = `レート：${rate}`
     random_hand()
     view_p1_hand()
     view_p2_hand()
@@ -323,6 +326,8 @@ function resetGame() {
 document.addEventListener('DOMContentLoaded', function () {
     deck = [...elements, ...elements]
     deck = shuffle(deck)
+    var rate = localStorage.getItem('rate')
+    document.getElementById("rate").innerHTML = `レート：${rate}`
     random_hand()
     view_p1_hand()
     view_p2_hand()
