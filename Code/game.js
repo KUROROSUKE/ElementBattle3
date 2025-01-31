@@ -186,7 +186,7 @@ async function done(who) {
     } else {
         console.log("ゲーム終了")
         button.textContent = "ラウンド終了"
-        rate += Math.floor(Math.random()*10))
+        rate += Math.floor(Math.random()*10)
         localStorage.setItem('rate',rate)
         button.addEventListener("click", function () {localStorage.setItem('rate', rate)})
     }
