@@ -400,20 +400,19 @@
             "number": 23
         },
         {
-            "name": "酢酸ナトリウム",
-            "formula": "CH3COOHNa",
-            "point": 100,
+            "name": "チオ硫酸カリウム",
+            "formula": "K2S2O3",
+            "point": 150,
             "components": {
-                "C": 2,
-                "O": 2,
-                "H": 4,
-                "Na": 1
+                "K": 2,
+                "S": 2,
+                "O": 3
             },
             "advantageous": [
-                "HCl",
-                "H2SO4",
                 "I2",
-                "Br2"
+                "Cl2",
+                "HNO3",
+                "H2SO4"
             ],
             "number": 24
         },
@@ -712,24 +711,29 @@
             "number": 44
         },
         {
-            "name": "硝酸銅（Ⅱ）",
-            "formula": "Cu(NO3)2",
-            "point": 140,
+            "name": "過マンガン酸カリウム",
+            "formula": "KMnO₄",
+            "point": 135,
             "components": {
-                "Cu": 1,
-                "N": 2,
-                "O": 6
+                "K": 1,
+                "Mn": 1,
+                "O": 4
             },
             "advantageous": [
-                "NaOH",
-                "KOH",
-                "NH3"
+                "H2O2",
+                "HCl",
+                "H2S",
+                "SO2",
+                "Fe2+",
+                "C",
+                "Na2C2O4",
+                "I2"
             ],
             "number": 45
-        },
+        },        
         {
             "name": "硝酸銀",
-            "formula": "AgNO3",
+            "formula": "AgNO₃",
             "point": 45,
             "components": {
                 "Ag": 1,
@@ -776,21 +780,21 @@
             "number": 48
         },
         {
-            "name": "硝酸カルシウム",
-            "formula": "Ca(NO3)2",
-            "point": 140,
+            "name": "窒化アルミニウム",
+            "formula": "AlN",
+            "point": 23,
             "components": {
-                "Ca": 1,
-                "N": 2,
-                "O": 6
+                "Al": 1,
+                "N": 1
             },
             "advantageous": [
-                "NaOH",
-                "KOH",
-                "NH3"
+                "HCl",
+                "H2SO4",
+                "HNO3",
+                "H2O"
             ],
             "number": 49
-        },
+        },        
         {
             "name": "炭酸ナトリウム",
             "formula": "Na2CO3",
@@ -870,22 +874,17 @@
             "number": 54
         },
         {
-            "name": "炭酸アンモニウム",
-            "formula": "(NH4)2CO3",
-            "point": 560,
+            "name": "窒化ホウ素",
+            "formula": "BN",
+            "point": 23,
             "components": {
-                "N": 2,
-                "H": 8,
-                "C": 1,
-                "O": 3
+                "B": 1,
+                "N": 1
             },
             "advantageous": [
-                "HCl",
-                "H2SO4",
-                "H2O"
             ],
             "number": 55
-        },
+        },        
         {
             "name": "水酸化ナトリウム",
             "formula": "NaOH",
@@ -1381,6 +1380,113 @@
                 "I2"
             ],
             "number": 89
-        }
+        },
+        {
+            "name": "窒化炭素",
+            "formula": "C₃N₄",
+            "point": 100,
+            "components": {
+                "C": 3,
+                "N": 4
+            },
+            "advantageous": [
+                "H2O", 
+                "HCl", 
+                "H2SO4"
+            ],
+            "number": 90
+        },
+        {
+            "name": "窒化リン",
+            "formula": "PN",
+            "point": 23,
+            "components": {
+                "P": 1,
+                "N": 1
+            },
+            "advantageous": [
+                "H2O", 
+                "HCl", 
+                "H2SO4"
+            ],
+            "number": 91
+        },
+        {
+            "name": "リン酸二水素ナトリウム",
+            "formula": "NaH₂PO₄",
+            "point": 140,
+            "components": {
+                "P": 1,
+                "Na": 1,
+                "H": 2,
+                "O": 4
+            },
+            "advantageous": [
+                "NaOH", 
+                "KOH", 
+                "Ca(OH)2"
+            ],
+            "number": 92
+        },
+        {
+            "name": "炭化ナトリウム",
+            "formula": "Na₂C₂",
+            "point": 100,
+            "components": {
+                "C": 2,
+                "Na": 2
+            },
+            "advantageous": [
+                "H2O", 
+                "HCl", 
+                "H2SO4"
+            ],
+            "number": 93
+        },
+        {
+            "name": "フッ化ナトリウム",
+            "formula": "NaF",
+            "point": 35,
+            "components": {
+                "F": 1,
+                "Na": 1
+            },
+            "advantageous": [
+                "H2O", 
+                "HCl", 
+                "H2SO4"
+            ],
+            "number": 94
+        },
+        {
+            "name": "水素化ナトリウム",
+            "formula": "NaH",
+            "point": 30,
+            "components": {
+                "H": 1,
+                "Na": 1
+            },
+            "advantageous": [
+                "H2O", 
+                "HCl", 
+                "H2SO4"
+            ],
+            "number": 95
+        },
+        {
+            "name": "ヨウ化ナトリウム",
+            "formula": "NaI",
+            "point": 35,
+            "components": {
+                "I": 1,
+                "Na": 1
+            },
+            "advantageous": [
+                "Cl2", 
+                "Br2", 
+                "H2O"
+            ],
+            "number": 96
+        }        
     ]
 }
