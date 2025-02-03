@@ -176,8 +176,8 @@ async function done(who) {
     p2_point += thisGame_p2_point
     document.getElementById("p2_point").innerHTML += `+${thisGame_p2_point}`
     document.getElementById("p1_point").innerHTML += `+${thisGame_p1_point}`
-    document.getElementById("p2_explain").innerHTML = `生成物質：${p2_make_material[0].name}`
-    document.getElementById("p1_explain").innerHTML = `生成物質：${p1_make_material[0].name}`
+    document.getElementById("p2_explain").innerHTML = `生成物質：${p2_make_material[0].name}, 組成式：${p2_make_material[0].formula}`
+    document.getElementById("p1_explain").innerHTML = `生成物質：${p1_make_material[0].name}, 組成式：${p1_make_material[0].formula}`
     // win check.
     winner = await win_check()
     console.log(`winner: ${winner} (if no winner, then this properties are show "null".)`)
