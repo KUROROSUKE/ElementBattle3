@@ -1,6 +1,14 @@
 {
     "material": [
         {
+            "name": "なし",
+            "formula": "なし",
+            "point": 0,
+            "components": {},
+            "advantageous": [],
+            "number": 0
+        },
+        {
             "name": "水素",
             "formula": "H₂",
             "point": 5,
