@@ -77,7 +77,7 @@ async function view_p2_hand() {
                 this.style.border = "1px solid #000"
                 p2_hand[index] = newElem
                 turn = "p1"
-                setTimeout(() => {p1_exchange()},500)
+                setTimeout(() => {p1_action()},500)
             }
         })
         area.appendChild(image)
@@ -100,47 +100,61 @@ async function view_p1_hand() {
 }
 
 async function search(components) {
-    const materials = await loadMaterials()
-    return materials.filter(material => {
+    const materials = await loadMaterials();
+    return materials.find(material => {
         for (const element in components) {
             if (!material.components[element] || material.components[element] !== components[element]) {
-                return false
+                return false;
             }
         }
         for (const element in material.components) {
             if (!components[element]) {
-                return false
+                return false;
             }
         }
-        return true
-    })
+        return true;
+    }) || materials[0];
 }
 
 async function p1_make() {
-    //console.log("P1はアガるための元素を選んでください。")
-    //FIXME:ここに上がるための元素を選択するコードを実装（相手の元素の読みなどを含めて）
+    // console.log("P1はアガるための元素を選んでください。")
+    // FIXME: ここに上がるための元素を選択するコードを実装（相手の元素の読みなどを含めて）
 
-    //return [返す元素のデータ]
-    //TODO: とりあえず最もポイントが高い元素を利用する / from AI.js
-    const makeable_material = await search_materials(arrayToObj(p1_hand))
-    makeable_material.sort((a,b) => b.point - a.point)
-    console.log(makeable_material)
-    return makeable_material
-    //return materials.then(array => {return array[1]})
+    // TODO: とりあえず最もポイントが高い元素を利用する / from AI.js
+    const makeable_material = await search_materials(arrayToObj(p1_hand));
+
+    // 作れる物質がない場合は "なし" を返す
+    if (!makeable_material || makeable_material.length === 0) {
+        return [{
+            "name": "なし",
+            "formula": "なし",
+            "point": 0,
+            "components": {},
+            "advantageous": [],
+            "number": 0
+        }];
+    }
+
+    // ポイントが高い順にソート
+    makeable_material.sort((a, b) => b.point - a.point);
+    console.log(makeable_material);
+
+    return makeable_material;
 }
 
 async function p2_make() {
     // ボタンの表示を変更
-    document.getElementById("generate_button").style.display = "none"
-    const button = document.getElementById("done_button")
-    button.style.display = "inline"
+    document.getElementById("generate_button").style.display = "none";
+    const button = document.getElementById("done_button");
+    button.style.display = "inline";
+
     // ボタンクリックを待機
     return new Promise((resolve) => {
         button.addEventListener("click", function () {
-            const p2_make_material = search(arrayToObj(p2_selected_card))
-            resolve(p2_make_material) // ボタンクリック後にデータを返す
-        })
-    })
+            const p2_make_material = search(arrayToObj(p2_selected_card));
+            resolve(p2_make_material)
+        });
+    });
 }
 
 async function get_dora() {
@@ -150,25 +164,25 @@ async function get_dora() {
 async function done(who) {
     const p2_make_material = await p2_make()
     const p1_make_material = await p1_make()
-    recordGameData(1,p2_make_material[0].components)
-    console.log(p2_make_material[0])
+    console.log(p2_make_material)
+    recordGameData(1,p2_make_material.components)
     dora = await get_dora()
     console.log(`dora: ${dora}`)
-    let thisGame_p2_point = p2_make_material[0].point
+    let thisGame_p2_point = p2_make_material.point
     let thisGame_p1_point = p1_make_material[0].point
     // if you're material has advantage, you get more point
-    if (Boolean(p2_make_material[0].advantageous.includes(p1_make_material[0].formula))) {
+    if (Boolean(p2_make_material.advantageous.includes(p1_make_material[0].formula))) {
         thisGame_p2_point = thisGame_p2_point*(1.5+Math.random()/2)
-    } else if (Boolean(p1_make_material[0].advantageous.includes(p2_make_material[0].formula))) {
+    } else if (Boolean(p1_make_material[0].advantageous.includes(p2_make_material.formula))) {
         thisGame_p1_point = thisGame_p1_point*(1.5+Math.random()/2)
     }
     // if you're material's elements include dora, you get more point
-    if (Boolean(Object.keys(p2_make_material[0].components).includes(dora))) {
+    if (Boolean(Object.keys(p2_make_material.components).includes(dora))) {
         thisGame_p2_point = thisGame_p2_point*1.5
     } else if (Boolean(Object.keys(p1_make_material[0].components).includes(dora))) {
         thisGame_p1_point = thisGame_p1_point*1.5
     }
-    who=="p2" ?  thisGame_p2_point=thisGame_p2_point/2 : thisGame_p1_point=thisGame_p1_point/2
+    who=="p2" ?  thisGame_p2_point=thisGame_p2_point/1.5 : thisGame_p1_point=thisGame_p1_point/1.5
     // after multiplication, the value often float number, so round to integer.
     thisGame_p2_point = Math.round(thisGame_p2_point)
     thisGame_p1_point = Math.round(thisGame_p1_point)
@@ -176,7 +190,7 @@ async function done(who) {
     p2_point += thisGame_p2_point
     document.getElementById("p2_point").innerHTML += `+${thisGame_p2_point}`
     document.getElementById("p1_point").innerHTML += `+${thisGame_p1_point}`
-    document.getElementById("p2_explain").innerHTML = `生成物質：${p2_make_material[0].name}, 組成式：${p2_make_material[0].formula}`
+    document.getElementById("p2_explain").innerHTML = `生成物質：${p2_make_material.name}, 組成式：${p2_make_material.formula}`
     document.getElementById("p1_explain").innerHTML = `生成物質：${p1_make_material[0].name}, 組成式：${p1_make_material[0].formula}`
     // win check.
     winner = await win_check()
@@ -204,9 +218,9 @@ async function win_check() {
     return Math.abs(p1_point - p2_point) >= WIN_POINT ? p1_point>p2_point ? "p1": "p2" : numTurn >= WIN_TURN ? p1_point>p2_point ? "p1": "p2" : null
 }
 
-async function p1_exchange() {
-    // Select a random card index from p1_hand
-    const targetElem = Math.floor(Math.random() * p1_hand.length) // TODO: from AI.js
+async function p1_exchange(targetElem) {
+    // Select a random card index from p1_hand// TODO: from AI.js
+    console.log(targetElem)
     dropped_cards_p1.push(p1_hand[targetElem])
     // Ensure the target card exists and is valid
     if (!p1_hand[targetElem]) {
@@ -227,6 +241,7 @@ async function p1_exchange() {
     }
     // Select a new random element and replace the target card
     const newElem = drawCard()
+    console.log(p1_hand)
     p1_hand[targetElem] = newElem
     // Update the image element's appearance
     img.src = `../images/0.png`
@@ -239,9 +254,69 @@ async function p1_exchange() {
     img.classList.remove("selected")
     img.classList.add("selected")
     // Switch the turn to "p1"
+    console.log(p1_hand)
     turn = "p2"
 }
 
+async function p1_action() {
+    // Load materials data
+    const materials = await loadMaterials();
+    
+    // Filter materials worth more than 50 points
+    const highPointMaterials = materials.filter(material => material.point > 50);
+    
+    // Sort by probability of being made based on element availability
+    const sortedMaterials = highPointMaterials.sort((a, b) => {
+        let aMatchCount = Object.keys(a.components).reduce((count, elem) => count + Math.min(p1_hand.filter(e => e === elem).length, a.components[elem]), 0);
+        let bMatchCount = Object.keys(b.components).reduce((count, elem) => count + Math.min(p1_hand.filter(e => e === elem).length, b.components[elem]), 0);
+        return bMatchCount - aMatchCount || b.point - a.point;
+    });
+    
+    // Choose the best material to make
+    const targetMaterial = sortedMaterials[0];
+    if (!targetMaterial) {
+        console.log("No material over 50 points available.");
+        p1_exchange(Math.floor(Math.random() * p1_hand.length));
+        return;
+    }
+    
+    console.log(`Target material selected: ${targetMaterial.name} (Points: ${targetMaterial.point})`);
+    
+    // Check if p1 can generate the target material
+    let canMake = true;
+    for (const element in targetMaterial.components) {
+        if (!p1_hand.includes(element) || p1_hand.filter(e => e === element).length < targetMaterial.components[element]) {
+            canMake = false;
+            break;
+        }
+    }
+    
+    // If p1 can generate this material and it's worth more than 50 points, do it
+    if (canMake && targetMaterial.point > 50) {
+        console.log(`P1 is generating: ${targetMaterial.name}`);
+        p1_point += targetMaterial.point;
+        document.getElementById("p1_point").innerText = `ポイント：${p1_point}`;
+        time = "make";
+        await done("p1");
+        return;
+    }
+    
+    // If no high-point material can be made, select an element for exchange and call p1_exchange
+    let unnecessaryCards = p1_hand.filter(e => {
+        return !(e in targetMaterial.components) || p1_hand.filter(card => card === e).length > targetMaterial.components[e];
+    });
+    
+    if (unnecessaryCards.length > 0) {
+        let cardToExchange = unnecessaryCards[Math.floor(Math.random() * unnecessaryCards.length)];
+        console.log(`P1 is exchanging an element: ${cardToExchange}`);
+        p1_exchange(p1_hand.indexOf(cardToExchange));
+    } else {
+        done("p1")
+    }
+    
+    // Ensure the turn passes to p2 after p1_action executes
+    turn = "p2";
+}
 
 
 //便利系関数
@@ -308,6 +383,7 @@ document.getElementById("generate_button").addEventListener("click", function ()
 function resetGame() {
     p1_hand = []; p2_hand = []; dropped_cards_p1 = []; dropped_cards_p2 = []; p1_selected_card = []; p2_selected_card = []
     time = "game"
+    turn = Math.random()<=0.5 ? "p1" : "p2"
     document.getElementById("p1_point").innerHTML = `ポイント：${p1_point}`
     document.getElementById("p1_explain").innerHTML = "　"
     document.getElementById("p2_point").innerHTML = `ポイント：${p2_point}`
@@ -329,6 +405,7 @@ function resetGame() {
     random_hand()
     view_p1_hand()
     view_p2_hand()
+    if (turn=="p1") {p1_action()}
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -344,7 +421,7 @@ document.addEventListener('DOMContentLoaded', function () {
     view_p1_hand()
     view_p2_hand()
     turn = Math.random()>=0.5 ? "p1" : "p2"
-    if (turn == "p1") { p1_exchange()}
+    if (turn == "p1") {p1_action()}
 })
 
 function recordGameData(action,cards) {
