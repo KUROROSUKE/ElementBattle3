@@ -192,7 +192,7 @@ async function done(who, isRon = false) {
 
     // **ロン時のボーナス**
     if (isRon) {
-        thisGame_p2_point *= 1.5;
+        thisGame_p2_point *= 2.25;
     }
 
     who == "p2" ? thisGame_p2_point /= 1.5 : thisGame_p1_point /= 1.5;
