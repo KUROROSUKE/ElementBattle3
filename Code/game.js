@@ -11,6 +11,7 @@ let dropped_cards_p1 = []; let dropped_cards_p2 = []
 let turn = "p1"
 let time = "game"
 let numTurn = 1
+let p1_is_acting = false
 
 let collectedData = []
 var rate = 0
@@ -46,6 +47,8 @@ async function view_p2_hand() {
         image.style.border = "1px solid #000"
         image.classList.add("selected")
         image.addEventListener("click", function() {
+            const button = document.getElementById("ron_button")
+            button.style.display = "none"
             if (time == "make") {
                 this.classList.toggle("selected")
                 if (this.classList.contains("selected")){
@@ -161,56 +164,77 @@ async function get_dora() {
     return element[Math.round(Math.random()*23)]
 }
 
-async function done(who) {
-    const p2_make_material = await p2_make()
-    const p1_make_material = await p1_make()
-    console.log(p2_make_material)
-    recordGameData(1,p2_make_material.components)
-    dora = await get_dora()
-    console.log(`dora: ${dora}`)
-    let thisGame_p2_point = p2_make_material.point
-    let thisGame_p1_point = p1_make_material[0].point
-    // if you're material has advantage, you get more point
+async function done(who, isRon = false) {
+    const p2_make_material = await p2_make();
+    const p1_make_material = await p1_make();
+    console.log(p2_make_material);
+    recordGameData(1, p2_make_material.components);
+    
+    dora = await get_dora();
+    console.log(`dora: ${dora}`);
+    
+    let thisGame_p2_point = p2_make_material.point;
+    let thisGame_p1_point = p1_make_material[0].point;
+
+    // 有利な生成物の場合のボーナス
     if (Boolean(p2_make_material.advantageous.includes(p1_make_material[0].formula))) {
-        thisGame_p2_point = thisGame_p2_point*(1.5+Math.random()/2)
+        thisGame_p2_point *= (1.5 + Math.random() / 2);
     } else if (Boolean(p1_make_material[0].advantageous.includes(p2_make_material.formula))) {
-        thisGame_p1_point = thisGame_p1_point*(1.5+Math.random()/2)
+        thisGame_p1_point *= (1.5 + Math.random() / 2);
     }
-    // if you're material's elements include dora, you get more point
+
+    // 役の中にドラが含まれる場合のボーナス
     if (Boolean(Object.keys(p2_make_material.components).includes(dora))) {
-        thisGame_p2_point = thisGame_p2_point*1.5
+        thisGame_p2_point *= 1.5;
     } else if (Boolean(Object.keys(p1_make_material[0].components).includes(dora))) {
-        thisGame_p1_point = thisGame_p1_point*1.5
+        thisGame_p1_point *= 1.5;
     }
-    who=="p2" ?  thisGame_p2_point=thisGame_p2_point/1.5 : thisGame_p1_point=thisGame_p1_point/1.5
-    // after multiplication, the value often float number, so round to integer.
-    thisGame_p2_point = Math.round(thisGame_p2_point)
-    thisGame_p1_point = Math.round(thisGame_p1_point)
-    p1_point += thisGame_p1_point
-    p2_point += thisGame_p2_point
-    document.getElementById("p2_point").innerHTML += `+${thisGame_p2_point}`
-    document.getElementById("p1_point").innerHTML += `+${thisGame_p1_point}`
-    document.getElementById("p2_explain").innerHTML = `生成物質：${p2_make_material.name}, 組成式：${p2_make_material.formula}`
-    document.getElementById("p1_explain").innerHTML = `生成物質：${p1_make_material[0].name}, 組成式：${p1_make_material[0].formula}`
-    // win check.
-    winner = await win_check()
-    console.log(`winner: ${winner} (if no winner, then this properties are show "null".)`)
-    document.getElementById("done_button").style.display = "none"
-    const button = document.getElementById("nextButton")
-    button.style.display = "inline"
+
+    // **ロン時のボーナス**
+    if (isRon) {
+        thisGame_p2_point *= 1.5;
+    }
+
+    who == "p2" ? thisGame_p2_point /= 1.5 : thisGame_p1_point /= 1.5;
+
+    // 小数点以下を四捨五入
+    thisGame_p2_point = Math.round(thisGame_p2_point);
+    thisGame_p1_point = Math.round(thisGame_p1_point);
+
+    // 得点を更新
+    p1_point += thisGame_p1_point;
+    p2_point += thisGame_p2_point;
+
+    // 画面に反映
+    document.getElementById("p2_point").innerHTML += `+${thisGame_p2_point}`;
+    document.getElementById("p1_point").innerHTML += `+${thisGame_p1_point}`;
+    document.getElementById("p2_explain").innerHTML = `生成物質：${p2_make_material.name}, 組成式：${p2_make_material.formula}`;
+    document.getElementById("p1_explain").innerHTML = `生成物質：${p1_make_material[0].name}, 組成式：${p1_make_material[0].formula}`;
+
+    // 勝者判定
+    const winner = await win_check();
+    console.log(`winner: ${winner} (if no winner, then this properties are show "null".)`);
+    
+    document.getElementById("done_button").style.display = "none";
+    const button = document.getElementById("nextButton");
+    button.style.display = "inline";
+
     if (!winner) {
-        console.log("次のゲーム")
-        numTurn += 1
-        button.textContent = "次のゲーム"
-        button.addEventListener("click", function () {resetGame()})
+        console.log("次のゲーム");
+        numTurn += 1;
+        button.textContent = "次のゲーム";
+        button.addEventListener("click", function () { resetGame();button.style.display = "none"});
     } else {
-        console.log("ゲーム終了")
-        button.textContent = "ラウンド終了"
+        console.log("ゲーム終了");
+        button.textContent = "ラウンド終了";
         button.addEventListener("click", function () {
-            localStorage.setItem("rate",`${rate+10}`)
-            p1_point=0;p2_point=0;numTurn=0
-            resetGame()
-        })
+            localStorage.setItem("rate", `${rate + 10}`);
+            p1_point = 0;
+            p2_point = 0;
+            numTurn = 0;
+            resetGame();
+            button.style.display = "none"
+        });
     }
 }
 
@@ -220,8 +244,9 @@ async function win_check() {
 
 async function p1_exchange(targetElem) {
     // Select a random card index from p1_hand// TODO: from AI.js
-    console.log(targetElem)
     dropped_cards_p1.push(p1_hand[targetElem])
+    var exchange_element = p1_hand[targetElem]
+    console.log(exchange_element)
     // Ensure the target card exists and is valid
     if (!p1_hand[targetElem]) {
         console.error("Invalid target element in p1_hand.")
@@ -241,7 +266,6 @@ async function p1_exchange(targetElem) {
     }
     // Select a new random element and replace the target card
     const newElem = drawCard()
-    console.log(p1_hand)
     p1_hand[targetElem] = newElem
     // Update the image element's appearance
     img.src = `../images/0.png`
@@ -254,69 +278,67 @@ async function p1_exchange(targetElem) {
     img.classList.remove("selected")
     img.classList.add("selected")
     // Switch the turn to "p1"
-    console.log(p1_hand)
     turn = "p2"
+    checkRon(exchange_element);
 }
 
 async function p1_action() {
+    if (turn !== "p1" || p1_is_acting) {
+        return;  // すでに行動中なら何もしない
+    }
+    p1_is_acting = true;  // 行動開始
+
+    console.log(`P1のターン開始: ${turn}`);
+
     // Load materials data
     const materials = await loadMaterials();
     
-    // Filter materials worth more than 50 points
+    // フィルタリング
     const highPointMaterials = materials.filter(material => material.point > 50);
     
-    // Sort by probability of being made based on element availability
+    // 最適な物質を選択
     const sortedMaterials = highPointMaterials.sort((a, b) => {
         let aMatchCount = Object.keys(a.components).reduce((count, elem) => count + Math.min(p1_hand.filter(e => e === elem).length, a.components[elem]), 0);
         let bMatchCount = Object.keys(b.components).reduce((count, elem) => count + Math.min(p1_hand.filter(e => e === elem).length, b.components[elem]), 0);
         return bMatchCount - aMatchCount || b.point - a.point;
     });
-    
-    // Choose the best material to make
+
     const targetMaterial = sortedMaterials[0];
+
     if (!targetMaterial) {
-        console.log("No material over 50 points available.");
+        console.log("P1: 高得点の物質が見つからないため、交換します。");
         p1_exchange(Math.floor(Math.random() * p1_hand.length));
-        return;
-    }
-    
-    console.log(`Target material selected: ${targetMaterial.name} (Points: ${targetMaterial.point})`);
-    
-    // Check if p1 can generate the target material
-    let canMake = true;
-    for (const element in targetMaterial.components) {
-        if (!p1_hand.includes(element) || p1_hand.filter(e => e === element).length < targetMaterial.components[element]) {
-            canMake = false;
-            break;
+    } else {
+        let canMake = true;
+        for (const element in targetMaterial.components) {
+            if (!p1_hand.includes(element) || p1_hand.filter(e => e === element).length < targetMaterial.components[element]) {
+                canMake = false;
+                break;
+            }
+        }
+
+        if (canMake && targetMaterial.point > 50) {
+            console.log(`P1: ${targetMaterial.name} を生成`);
+            time = "make";
+            await done("p1");
+        } else {
+            let unnecessaryCards = p1_hand.filter(e => {
+                return !(e in targetMaterial.components) || p1_hand.filter(card => card === e).length > targetMaterial.components[e];
+            });
+
+            if (unnecessaryCards.length > 0) {
+                let cardToExchange = unnecessaryCards[Math.floor(Math.random() * unnecessaryCards.length)];
+                p1_exchange(p1_hand.indexOf(cardToExchange));
+            } else {
+                done("p1");
+            }
         }
     }
     
-    // If p1 can generate this material and it's worth more than 50 points, do it
-    if (canMake && targetMaterial.point > 50) {
-        console.log(`P1 is generating: ${targetMaterial.name}`);
-        p1_point += targetMaterial.point;
-        document.getElementById("p1_point").innerText = `ポイント：${p1_point}`;
-        time = "make";
-        await done("p1");
-        return;
-    }
-    
-    // If no high-point material can be made, select an element for exchange and call p1_exchange
-    let unnecessaryCards = p1_hand.filter(e => {
-        return !(e in targetMaterial.components) || p1_hand.filter(card => card === e).length > targetMaterial.components[e];
-    });
-    
-    if (unnecessaryCards.length > 0) {
-        let cardToExchange = unnecessaryCards[Math.floor(Math.random() * unnecessaryCards.length)];
-        console.log(`P1 is exchanging an element: ${cardToExchange}`);
-        p1_exchange(p1_hand.indexOf(cardToExchange));
-    } else {
-        done("p1")
-    }
-    
-    // Ensure the turn passes to p2 after p1_action executes
-    turn = "p2";
+    turn = "p2";  // `p1_action` が終了したらターンを `p2` に移す
+    p1_is_acting = false;  // 行動終了
 }
+
 
 
 //便利系関数
@@ -376,37 +398,57 @@ function random_hand() {
 document.getElementById("generate_button").addEventListener("click", function () {
     if (turn == "p2") {
         time = "make"
+        const newRonButton = document.getElementById("ron_button");
+        newRonButton.style.display = "none";
         done("p2")
     }
 })
 
 function resetGame() {
-    p1_hand = []; p2_hand = []; dropped_cards_p1 = []; dropped_cards_p2 = []; p1_selected_card = []; p2_selected_card = []
-    time = "game"
-    turn = Math.random()<=0.5 ? "p1" : "p2"
-    document.getElementById("p1_point").innerHTML = `ポイント：${p1_point}`
-    document.getElementById("p1_explain").innerHTML = "　"
-    document.getElementById("p2_point").innerHTML = `ポイント：${p2_point}`
-    document.getElementById("p2_explain").innerHTML = "　"
-    let p1_hand_element = document.getElementById("p1_hand")
-    while (p1_hand_element.firstChild) {p1_hand_element.removeChild(p1_hand_element.firstChild)}
-    let dropped_area_p1_element = document.getElementById("dropped_area_p1")
-    while (dropped_area_p1_element.firstChild) {dropped_area_p1_element.removeChild(dropped_area_p1_element.firstChild)}
-    let p2_hand_element = document.getElementById("p2_hand")
-    while (p2_hand_element.firstChild) {p2_hand_element.removeChild(p2_hand_element.firstChild)}
-    let dropped_area_p2_element = document.getElementById("dropped_area_p2")
-    while (dropped_area_p2_element.firstChild) {dropped_area_p2_element.removeChild(dropped_area_p2_element.firstChild)}
-    document.getElementById("generate_button").style.display = "inline"
-    document.getElementById("done_button").style.display = "none"
-    document.getElementById("nextButton").style.display = "none"
-    deck = [...elements, ...elements]
-    deck = shuffle(deck)
-    document.getElementById("rate_area").innerHTML = `レート：${rate}`
-    random_hand()
-    view_p1_hand()
-    view_p2_hand()
-    if (turn=="p1") {p1_action()}
+    p1_hand = [];
+    p2_hand = [];
+    dropped_cards_p1 = [];
+    dropped_cards_p2 = [];
+    p1_selected_card = [];
+    p2_selected_card = [];
+    time = "game";
+    turn = Math.random() <= 0.5 ? "p1" : "p2";
+    numTurn = 1;  // ターンカウントをリセット
+
+    document.getElementById("p1_point").innerHTML = `ポイント：${p1_point}`;
+    document.getElementById("p1_explain").innerHTML = "　";
+    document.getElementById("p2_point").innerHTML = `ポイント：${p2_point}`;
+    document.getElementById("p2_explain").innerHTML = "　";
+
+    document.getElementById("generate_button").style.display = "inline";
+    document.getElementById("done_button").style.display = "none";
+    document.getElementById("nextButton").style.display = "none";
+
+    deck = [...elements, ...elements];
+    deck = shuffle(deck);
+
+    document.getElementById("rate_area").innerHTML = `レート：${rate}`;
+
+    const p1_hand_element = document.getElementById("p1_hand");
+    const p2_hand_element = document.getElementById("p2_hand");
+    p1_hand_element.innerHTML = "";
+    p2_hand_element.innerHTML = "";
+
+    const dropped_area_p1_element = document.getElementById("dropped_area_p1");
+    const dropped_area_p2_element = document.getElementById("dropped_area_p2");
+    dropped_area_p1_element.innerHTML = "";
+    dropped_area_p2_element.innerHTML = "";
+
+    random_hand();
+    view_p1_hand();
+    view_p2_hand();
+
+    if (turn === "p1") {
+        console.log("P1のターン開始");
+        setTimeout(() => p1_action(), 500);  // `setTimeout` で 1回だけ `p1_action()` を実行
+    }
 }
+
 
 document.addEventListener('DOMContentLoaded', function () {
     deck = [...elements, ...elements]
@@ -454,3 +496,22 @@ function downloadGameData() {
 document.getElementById("dataDownload").addEventListener("click", function () {
     downloadGameData()
 })
+
+async function checkRon(droppedCard) {
+    console.log(droppedCard);
+    const possibleMaterials = await search_materials(arrayToObj([...p2_hand, droppedCard]));
+    if (possibleMaterials.length > 0) {
+        const ronButton = document.getElementById("ron_button");
+        ronButton.style.display = "inline";
+
+        // イベントリスナーが重複しないように一度削除
+        ronButton.replaceWith(ronButton.cloneNode(true));
+        const newRonButton = document.getElementById("ron_button");
+        newRonButton.addEventListener("click", function () {
+            newRonButton.style.display = "none";
+            p2_selected_card = [droppedCard]; // 選択カードを更新
+            time = "make";
+            done("p2", true); // 「ロン」として完了
+        });
+    }
+}
