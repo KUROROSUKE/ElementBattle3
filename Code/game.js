@@ -3,8 +3,8 @@ let p1_point = 0; let p2_point = 0
 let p1_selected_card = []; let p2_selected_card = []
 
 const card_num = 8
-const WIN_POINT = card_num*30+10
-const WIN_TURN = 10
+let WIN_POINT = card_num*30+10
+let WIN_TURN = 10
 
 let dropped_cards_p1 = []; let dropped_cards_p2 = []
 
@@ -120,7 +120,6 @@ async function search(components) {
 }
 
 async function p1_make() {
-    // console.log("P1はアガるための元素を選んでください。")
     // FIXME: ここに上がるための元素を選択するコードを実装（相手の元素の読みなどを含めて）
 
     // TODO: とりあえず最もポイントが高い元素を利用する / from AI.js
@@ -140,7 +139,6 @@ async function p1_make() {
 
     // ポイントが高い順にソート
     makeable_material.sort((a, b) => b.point - a.point);
-    console.log(makeable_material);
 
     return makeable_material;
 }
@@ -167,11 +165,10 @@ async function get_dora() {
 async function done(who, isRon = false) {
     const p2_make_material = await p2_make();
     const p1_make_material = await p1_make();
-    console.log(p2_make_material);
     recordGameData(1, p2_make_material.components);
     
     dora = await get_dora();
-    console.log(`dora: ${dora}`);
+    console.log(`ドラ: ${dora}`);
     
     let thisGame_p2_point = p2_make_material.point;
     let thisGame_p1_point = p1_make_material[0].point;
@@ -192,10 +189,10 @@ async function done(who, isRon = false) {
 
     // **ロン時のボーナス**
     if (isRon) {
-        thisGame_p2_point *= 2.25;
+        who == "p2" ? thisGame_p2_point /= 1.2 : thisGame_p1_point /= 1.2
     }
 
-    who == "p2" ? thisGame_p2_point /= 1.5 : thisGame_p1_point /= 1.5;
+    who == "p2" ? thisGame_p1_point /= 1.5 : thisGame_p2_point /= 1.5;
 
     // 小数点以下を四捨五入
     thisGame_p2_point = Math.round(thisGame_p2_point);
@@ -211,9 +208,10 @@ async function done(who, isRon = false) {
     document.getElementById("p2_explain").innerHTML = `生成物質：${p2_make_material.name}, 組成式：${p2_make_material.formula}`;
     document.getElementById("p1_explain").innerHTML = `生成物質：${p1_make_material[0].name}, 組成式：${p1_make_material[0].formula}`;
 
+    //updateGeneratedMaterials(p2_make_material.name); //ここは、もしかしたらAI作成に使えるかも
+
     // 勝者判定
     const winner = await win_check();
-    console.log(`winner: ${winner} (if no winner, then this properties are show "null".)`);
     
     document.getElementById("done_button").style.display = "none";
     const button = document.getElementById("nextButton");
@@ -229,6 +227,7 @@ async function done(who, isRon = false) {
         button.textContent = "ラウンド終了";
         button.addEventListener("click", function () {
             localStorage.setItem("rate", `${rate + 10}`);
+            returnToStartScreen()
             p1_point = 0;
             p2_point = 0;
             numTurn = 0;
@@ -246,7 +245,6 @@ async function p1_exchange(targetElem) {
     // Select a random card index from p1_hand// TODO: from AI.js
     dropped_cards_p1.push(p1_hand[targetElem])
     var exchange_element = p1_hand[targetElem]
-    console.log(exchange_element)
     // Ensure the target card exists and is valid
     if (!p1_hand[targetElem]) {
         console.error("Invalid target element in p1_hand.")
@@ -288,8 +286,6 @@ async function p1_action() {
     }
     p1_is_acting = true;  // 行動開始
 
-    console.log(`P1のターン開始: ${turn}`);
-
     // Load materials data
     const materials = await loadMaterials();
     
@@ -306,7 +302,6 @@ async function p1_action() {
     const targetMaterial = sortedMaterials[0];
 
     if (!targetMaterial) {
-        console.log("P1: 高得点の物質が見つからないため、交換します。");
         p1_exchange(Math.floor(Math.random() * p1_hand.length));
     } else {
         let canMake = true;
@@ -318,7 +313,6 @@ async function p1_action() {
         }
 
         if (canMake && targetMaterial.point > 50) {
-            console.log(`P1: ${targetMaterial.name} を生成`);
             time = "make";
             await done("p1");
         } else {
@@ -444,11 +438,9 @@ function resetGame() {
     view_p2_hand();
 
     if (turn === "p1") {
-        console.log("P1のターン開始");
         setTimeout(() => p1_action(), 500);  // `setTimeout` で 1回だけ `p1_action()` を実行
     }
 }
-
 
 document.addEventListener('DOMContentLoaded', function () {
     deck = [...elements, ...elements]
@@ -498,20 +490,87 @@ document.getElementById("dataDownload").addEventListener("click", function () {
 })
 
 async function checkRon(droppedCard) {
-    console.log(droppedCard);
-    const possibleMaterials = await search_materials(arrayToObj([...p2_hand, droppedCard]));
-    if (possibleMaterials.length > 0) {
+    // P2のロン判定
+    const possibleMaterialsP2 = await search_materials(arrayToObj([...p2_hand, droppedCard]));
+    if (possibleMaterialsP2.length > 0) {
         const ronButton = document.getElementById("ron_button");
         ronButton.style.display = "inline";
-
-        // イベントリスナーが重複しないように一度削除
-        ronButton.replaceWith(ronButton.cloneNode(true));
+        ronButton.replaceWith(ronButton.cloneNode(true));  // 古いイベントリスナーを削除
         const newRonButton = document.getElementById("ron_button");
+
         newRonButton.addEventListener("click", function () {
             newRonButton.style.display = "none";
-            p2_selected_card = [droppedCard]; // 選択カードを更新
+            p2_selected_card = [droppedCard];
             time = "make";
-            done("p2", true); // 「ロン」として完了
+            done("p2", true);
         });
     }
+
+    // P1のロン判定（捨てられたカードを含める）
+    const possibleMaterialsP1 = await search_materials(arrayToObj([...p1_hand, droppedCard]));
+    const highPointMaterialsP1 = possibleMaterialsP1.filter(material => material.point >= 70);
+
+    if (highPointMaterialsP1.length > 0) {
+        // **P1の手札に捨てたカードがもうない可能性があるため、戻す**
+        p1_hand.push(droppedCard);
+        
+        // P1のロン処理のため、ロンに使うカードを選択
+        p1_selected_card = [droppedCard];
+
+        // `time` を "make" に変更
+        time = "make";
+
+        // P1のロン処理を実行
+        done("p1", true);
+    }
+}
+
+function updateGeneratedMaterials(materialName) {
+    if (!materialName || materialName === "なし") return;
+
+    // LocalStorage からデータを取得（なければ空のオブジェクト）
+    let generatedMaterials = JSON.parse(localStorage.getItem("generatedMaterials")) || {};
+
+    // 物質のカウントを更新
+    if (generatedMaterials[materialName]) {
+        generatedMaterials[materialName] += 1;
+    } else {
+        generatedMaterials[materialName] = 1;
+    }
+
+    // LocalStorage に保存
+    localStorage.setItem("generatedMaterials", JSON.stringify(generatedMaterials));
+}
+
+function showRules() {
+    alert("【ゲームの遊び方】\n" +
+        "1. 手札の元素を使って化合物を作ろう！\n" +
+        "2. 交換したい場合は、クリックしてカードを捨てよう。\n" +
+        "3. 生成できる化合物があれば、「ツモ」または「ロン」ボタンを押して作ろう！\n" +
+        "4. 相手と250ポイント以上の差がつくか、10ゲームが終わった時点でポイントの多い方が勝利！\n" +
+        "【補足説明】\n" + 
+        "「ツモ」は自分の手札だけで化合物を作成すること、「ロン」は相手が最後に捨てたカードも利用して化合物を作成すること。\n" + 
+        "勝利条件のポイント差やゲーム数は、設定（右下）から変えられる。");
+}
+
+document.getElementById("setting_icon").addEventListener("click", function() {
+    document.getElementById("winSettingsModal").style.display = "inline"
+})
+
+// クリック時にモーダルを表示
+function openWinSettings() {
+    document.getElementById("winSettingsModal").style.display = "block";
+}
+
+// 入力された値を取得し変数に設定
+function saveWinSettings() {
+    WIN_POINT = parseInt(document.getElementById("winPointInput").value, 10) || 0;
+    WIN_TURN = parseInt(document.getElementById("winTurnInput").value, 10) || 0;
+    alert(`設定完了: WIN_POINT=${WIN_POINT}, WIN_TURN=${WIN_TURN}`);
+    closeWinSettings();
+}
+
+// モーダルを閉じる
+function closeWinSettings() {
+    document.getElementById("winSettingsModal").style.display = "none";
 }
