@@ -1112,7 +1112,7 @@
         {
             "name": "ダイヤモンド",
             "formula": "C₈",
-            "point": 120,
+            "point": 200,
             "components": {
                 "C": 8
             },
@@ -1488,6 +1488,18 @@
                 "H₂O"
             ],
             "number": 96
+        },
+        {
+            "name": "酸化アルミニウム",
+            "formula": "AlO",
+            "point": 17,
+            "components": {
+                "O": 1,
+                "Al": 1
+            },
+            "advantageous": [
+            ],
+            "number": 97
         }
     ]
 }
