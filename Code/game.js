@@ -226,7 +226,7 @@ async function done(who, isRon = false) {
         console.log("ゲーム終了");
         button.textContent = "ラウンド終了";
         button.addEventListener("click", function () {
-            localStorage.setItem("rate", `${rate + 10}`);
+            localStorage.setItem("rate", `${rate + Math.floor(p2_point/(250-WIN_POINT))}`);
             returnToStartScreen()
             p1_point = 0;
             p2_point = 0;
