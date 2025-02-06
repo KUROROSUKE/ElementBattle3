@@ -564,11 +564,24 @@ function openWinSettings() {
 
 // 入力された値を取得し変数に設定
 function saveWinSettings() {
-    WIN_POINT = parseInt(document.getElementById("winPointInput").value, 10) || 0;
-    WIN_TURN = parseInt(document.getElementById("winTurnInput").value, 10) || 0;
+    let winPointInput = parseInt(document.getElementById("winPointInput").value, 10);
+    let winTurnInput = parseInt(document.getElementById("winTurnInput").value, 10);
+
+    if (isNaN(winPointInput) || winPointInput < 0) {
+        alert("WIN_POINT は 0 以上の数値を入力してください。");
+        return;
+    }
+    if (isNaN(winTurnInput) || winTurnInput < 0) {
+        alert("WIN_TURN は 0 以上の数値を入力してください。");
+        return;
+    }
+
+    WIN_POINT = winPointInput;
+    WIN_TURN = winTurnInput;
     alert(`設定完了: WIN_POINT=${WIN_POINT}, WIN_TURN=${WIN_TURN}`);
     closeWinSettings();
 }
+
 
 // モーダルを閉じる
 function closeWinSettings() {
