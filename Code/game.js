@@ -20,7 +20,7 @@ const WindowSize = window.innerWidth
 const elementToNumber = {"H": 1, "He": 2, "Li": 3, "Be": 4, "B": 5, "C": 6, "N": 7, "O": 8, "F": 9, "Ne": 10,"Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Cl": 17, "Ar": 18, "K": 19, "Ca": 20,"Fe": 26, "Cu": 29, "Zn": 30, "I": 53}
 const elements = [...Array(15).fill('H'), ...Array(10).fill('O'), ...Array(10).fill('C'),'He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
 const element = ['H','O','C','He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
-let deck = [...elements, ...elements, ...elements]
+let deck = [...elements, ...elements]
 
 //　load materials
 async function loadMaterials() {
@@ -165,7 +165,6 @@ async function get_dora() {
 async function done(who, isRon = false) {
     const p2_make_material = await p2_make();
     const p1_make_material = await p1_make();
-    recordGameData(1, p2_make_material.components);
     
     dora = await get_dora();
     console.log(`ドラ: ${dora}`);
@@ -199,8 +198,10 @@ async function done(who, isRon = false) {
     thisGame_p1_point = Math.round(thisGame_p1_point);
 
     // 得点を更新
-    p1_point += thisGame_p1_point;
-    p2_point += thisGame_p2_point;
+    p1_point += await thisGame_p1_point;
+    p2_point += await thisGame_p2_point;
+    
+    recordGameData(1, p2_make_material.components);
 
     // 画面に反映
     document.getElementById("p2_point").innerHTML += `+${thisGame_p2_point}`;
@@ -394,6 +395,7 @@ document.getElementById("generate_button").addEventListener("click", function ()
         time = "make"
         const newRonButton = document.getElementById("ron_button");
         newRonButton.style.display = "none";
+        findMostPointMaterial()
         done("p2")
     }
 })
@@ -460,15 +462,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function recordGameData(action,cards) {
     const dataEntry = {
-        turn: numTurn,
-        p2_hand: [...p2_hand],
-        dropped_cards_p1: [...dropped_cards_p1],
-        dropped_cards_p2: [...dropped_cards_p2],
-        p1_point: p1_point,
-        p2_point: p2_point,
-        select_card: cards,
-        rate:rate,
-        action: action // 0: 交換, 1: 生成
+        p1_point: p1_point
     }
     collectedData.push(dataEntry)
 }
@@ -479,7 +473,7 @@ function downloadGameData() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = "1.json"
+    a.download = "point.json"
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -587,3 +581,25 @@ function saveWinSettings() {
 function closeWinSettings() {
     document.getElementById("winSettingsModal").style.display = "none";
 }
+
+async function findMostPointMaterial() {
+    const materials = await loadMaterials();  // 物質データを取得
+    const possibleMaterials = await search_materials(arrayToObj(p2_hand)); // p2_hand で作れる物質を検索
+    
+    if (possibleMaterials.length === 0) {
+        console.log("p2_hand 内で作成可能な物質はありません。");
+    } else {
+        const highestMaterial = possibleMaterials.reduce((max, material) => 
+            material.point > max.point ? material : max, possibleMaterials[0]);
+        console.log(`p2_hand 内で最もポイントが高い物質: ${highestMaterial.name} (ポイント: ${highestMaterial.point})`);
+    }
+}
+
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    let now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault();  // ダブルタップを無効化
+    }
+    lastTouchEnd = now;
+}, false);
