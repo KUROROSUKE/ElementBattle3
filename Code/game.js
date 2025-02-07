@@ -79,7 +79,6 @@
             #winSettingsModal {
                 left: 50%;
                 width: 80%;
-                background-color: blue;
             }
         }
         input[type="text"], input[type="number"], input[type="password"], input[type="email"] {
