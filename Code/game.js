@@ -78,7 +78,7 @@
         @media screen and (max-width: 480px) {
             #winSettingsModal {
                 left: 50%;
-                width: 80%;
+                width: 80%
             }
         }
         input[type="text"], input[type="number"], input[type="password"], input[type="email"] {
