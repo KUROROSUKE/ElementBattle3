@@ -1082,7 +1082,7 @@
         {
             "name": "エタン",
             "formula": "C₂H₆",
-            "point": 65,
+            "point": 100,
             "components": {
                 "C": 2,
                 "H": 6
@@ -1292,6 +1292,18 @@
         },
         {
             "name": "次亜塩素酸ナトリウム",
+            "formula": "NaClO",
+            "point": 55,
+            "components": {
+                "Cl": 1,
+                "O": 1,
+                "Na": 1
+            },
+            "advantageous": [],
+            "number": null
+        },
+        {
+            "name": "次亜塩素酸",
             "formula": "ClO",
             "point": 20,
             "components": {
@@ -1430,21 +1442,6 @@
             "number": 92
         },
         {
-            "name": "炭化ナトリウム",
-            "formula": "Na₂C₂",
-            "point": 100,
-            "components": {
-                "C": 2,
-                "Na": 2
-            },
-            "advantageous": [
-                "H₂O",
-                "HCl",
-                "H₂SO₄"
-            ],
-            "number": 93
-        },
-        {
             "name": "フッ化ナトリウム",
             "formula": "NaF",
             "point": 35,
@@ -1500,6 +1497,32 @@
             "advantageous": [
             ],
             "number": 97
+        },
+        {
+            "name": "クロロホルム",
+            "formula": "CHCl₃",
+            "point": 110,
+            "components": {
+                "C": 1,
+                "H": 1,
+                "Cl": 3
+            },
+            "advantageous": [
+            ],
+            "number": 98
+        },
+        {
+            "name": "エタノール",
+            "formula": "C₂H₆O",
+            "point": 200,
+            "components": {
+                "C": 2,
+                "H": 6,
+                "O": 1
+            },
+            "advantageous": [
+            ],
+            "number": 99
         }
     ]
 }
