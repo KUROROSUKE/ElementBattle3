@@ -79,14 +79,14 @@
             }
         }
         input[type="number"]{
-            width: 100%;  /* 横幅をデバイスに合わせる */
-            min-width: 200px;  /* 最小幅を確保 */
-            height: 48px;  /* 高さを確保 */
-            font-size: 18px;  /* 文字を大きく */
-            padding: 10px;  /* 余白を確保 */
-            box-sizing: border-box;  /* padding を含めて計算 */
-            border-radius: 5px;  /* 角を丸めてタップしやすく */
-            border: 1px solid #ccc;  /* 境界線を設定 */
+            width: 100%;
+            min-width: 200px;
+            height: 48px;
+            font-size: 18px;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
         #gameRuleButton {
             position: fixed;
@@ -142,6 +142,7 @@
             document.getElementById("dropped_area_p1").style.display = "none";
             document.getElementById("dropped_area_p2").style.display = "none";
             document.getElementById("p2_area").style.display = "none";
+            document.getElementById("gameRuleButton").style.display = "block";
         }
         document.getElementById("startButton").addEventListener("click", function() {
             document.getElementById("startScreen").style.display = "none";
@@ -149,6 +150,7 @@
             document.getElementById("dropped_area_p1").style.display = "block";
             document.getElementById("dropped_area_p2").style.display = "block";
             document.getElementById("p2_area").style.display = "block";
+            document.getElementById("gameRuleButton").style.display = "none";
         });
     </script>
 </body>
