@@ -72,16 +72,13 @@
             border: 1px solid black;
             z-index: 102;
         }
-        @media screen and (max-width: 959px) {
-            /* タブレット */
-        }
         @media screen and (max-width: 480px) {
             #winSettingsModal {
                 left: 50%;
                 width: 80%
             }
         }
-        input[type="text"], input[type="number"], input[type="password"], input[type="email"] {
+        input[type="number"]{
             width: 100%;  /* 横幅をデバイスに合わせる */
             min-width: 200px;  /* 最小幅を確保 */
             height: 48px;  /* 高さを確保 */
@@ -121,10 +118,14 @@
     <button id="dataDownload" style="display: none;">Data Download</button>
     <script src="game.js"></script>
     <div id="winSettingsModal">
-        <label>WIN_POINT: <input type="number" id="winPointInput" value=250></label><br>
-        <label>WIN_TURN: <input type="number" id="winTurnInput" value=10></label><br>
-        <button onclick="saveWinSettings()">完了</button>
-        <button onclick="closeWinSettings()">キャンセル</button>
+        <label>WIN_POINT: <input type="number" id="winPointInput" value="250" min="1"></label><br>
+        <label>WIN_TURN: <input type="number" id="winTurnInput" value="10" min="1"></label><br>
+        <div style="display: flex; justify-content: space-between; padding: 5%;">
+            <button onclick="saveWinSettings()" style="padding: 10px 20px; font-size: 1.2em; width: 45%;">完了</button>
+            <button onclick="closeWinSettings()" style="padding: 10px 20px; font-size: 1.2em; width: 45%;">キャンセル</button>
+        </div>
+        <hr>
+        <a href="https://forms.gle/6sKpeCiFVbJMErLj9" style="font-size: 8%;">「元素ゲーム」問い合わせフォーム</a>
     </div>
     <script>
         function returnToStartScreen() {
