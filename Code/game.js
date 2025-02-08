@@ -18,9 +18,9 @@ var rate = 0
 
 const WindowSize = window.innerWidth
 const elementToNumber = {"H": 1, "He": 2, "Li": 3, "Be": 4, "B": 5, "C": 6, "N": 7, "O": 8, "F": 9, "Ne": 10,"Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Cl": 17, "Ar": 18, "K": 19, "Ca": 20,"Fe": 26, "Cu": 29, "Zn": 30, "I": 53}
-const elements = [...Array(15).fill('H'), ...Array(10).fill('O'), ...Array(10).fill('C'),'He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
+const elements = [...Array(6).fill('H'), ...Array(4).fill('O'), ...Array(4).fill('C'),'He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
 const element = ['H','O','C','He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
-let deck = [...elements, ...elements]
+let deck = [...elements, ...elements, ...elements]
 
 //　load materials
 async function loadMaterials() {
@@ -227,7 +227,7 @@ async function done(who, isRon = false) {
         console.log("ゲーム終了");
         button.textContent = "ラウンド終了";
         button.addEventListener("click", function () {
-            localStorage.setItem("rate", `${rate + Math.floor(p2_point/(250-WIN_POINT))}`);
+            localStorage.setItem("rate", `${rate + 10}`);
             returnToStartScreen()
             p1_point = 0;
             p2_point = 0;
@@ -325,6 +325,7 @@ async function p1_action() {
                 let cardToExchange = unnecessaryCards[Math.floor(Math.random() * unnecessaryCards.length)];
                 p1_exchange(p1_hand.indexOf(cardToExchange));
             } else {
+                time = "make"
                 done("p1");
             }
         }
@@ -368,7 +369,7 @@ function shuffle(array) {
 }
 
 function drawCard() {
-    return deck.length > 0 ? deck.pop() : done("no-draw")
+    return deck.length > 0 ? deck.pop() : (time = "make", done("no-draw"));
 }
 
 async function search_materials(components) {
@@ -420,7 +421,7 @@ function resetGame() {
     document.getElementById("done_button").style.display = "none";
     document.getElementById("nextButton").style.display = "none";
 
-    deck = [...elements, ...elements];
+    deck = [...elements, ...elements, ...elements];
     deck = shuffle(deck);
 
     document.getElementById("rate_area").innerHTML = `レート：${rate}`;
@@ -445,7 +446,7 @@ function resetGame() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    deck = [...elements, ...elements]
+    deck = [...elements, ...elements, ...elements]
     deck = shuffle(deck)
     try {
         rate = Number(localStorage.getItem("rate"))
@@ -561,21 +562,23 @@ function saveWinSettings() {
     let winPointInput = parseInt(document.getElementById("winPointInput").value, 10);
     let winTurnInput = parseInt(document.getElementById("winTurnInput").value, 10);
 
-    if (isNaN(winPointInput) || winPointInput < 0) {
-        alert("WIN_POINT は 0 以上の数値を入力してください。");
+    if (isNaN(winPointInput) || winPointInput < 1) {
+        alert("WIN_POINT は 1 以上の数値を入力してください。");
         return;
     }
-    if (isNaN(winTurnInput) || winTurnInput < 0) {
-        alert("WIN_TURN は 0 以上の数値を入力してください。");
+    if (isNaN(winPointInput) || winPointInput > 999) {
+        alert("WIN_POINT の最大値は 999 です。");
+        return;
+    }
+    if (isNaN(winTurnInput) || winTurnInput < 1) {
+        alert("WIN_TURN は 1 以上の数値を入力してください。");
         return;
     }
 
     WIN_POINT = winPointInput;
     WIN_TURN = winTurnInput;
-    alert(`設定完了: WIN_POINT=${WIN_POINT}, WIN_TURN=${WIN_TURN}`);
     closeWinSettings();
 }
-
 
 // モーダルを閉じる
 function closeWinSettings() {
