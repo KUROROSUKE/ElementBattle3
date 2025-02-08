@@ -13,9 +13,6 @@ let time = "game"
 let numTurn = 1
 let p1_is_acting = false
 
-let collectedData = []
-var rate = 0
-
 const WindowSize = window.innerWidth
 const elementToNumber = {"H": 1, "He": 2, "Li": 3, "Be": 4, "B": 5, "C": 6, "N": 7, "O": 8, "F": 9, "Ne": 10,"Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Cl": 17, "Ar": 18, "K": 19, "Ca": 20,"Fe": 26, "Cu": 29, "Zn": 30, "I": 53}
 const elements = [...Array(6).fill('H'), ...Array(4).fill('O'), ...Array(4).fill('C'),'He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
@@ -67,7 +64,6 @@ async function view_p2_hand() {
                 img.src=`../images/${elementToNumber[this.alt]}.png`
                 img.style.width = `${WindowSize/24}px`
                 img.style.border = "1px solid #000"
-                recordGameData(0,this.alt)
                 document.getElementById("dropped_area_p2").appendChild(img)
                 this.classList.remove("selected")
                 this.classList.add("selected")
@@ -200,8 +196,6 @@ async function done(who, isRon = false) {
     // 得点を更新
     p1_point += await thisGame_p1_point;
     p2_point += await thisGame_p2_point;
-    
-    recordGameData(1, p2_make_material.components);
 
     // 画面に反映
     document.getElementById("p2_point").innerHTML += `+${thisGame_p2_point}`;
@@ -227,7 +221,6 @@ async function done(who, isRon = false) {
         console.log("ゲーム終了");
         button.textContent = "ラウンド終了";
         button.addEventListener("click", function () {
-            localStorage.setItem("rate", `${rate + 10}`);
             returnToStartScreen()
             p1_point = 0;
             p2_point = 0;
@@ -396,7 +389,7 @@ document.getElementById("generate_button").addEventListener("click", function ()
         time = "make"
         const newRonButton = document.getElementById("ron_button");
         newRonButton.style.display = "none";
-        findMostPointMaterial()
+        //findMostPointMaterial()
         done("p2")
     }
 })
@@ -424,8 +417,6 @@ function resetGame() {
     deck = [...elements, ...elements, ...elements];
     deck = shuffle(deck);
 
-    document.getElementById("rate_area").innerHTML = `レート：${rate}`;
-
     const p1_hand_element = document.getElementById("p1_hand");
     const p2_hand_element = document.getElementById("p2_hand");
     p1_hand_element.innerHTML = "";
@@ -448,40 +439,11 @@ function resetGame() {
 document.addEventListener('DOMContentLoaded', function () {
     deck = [...elements, ...elements, ...elements]
     deck = shuffle(deck)
-    try {
-        rate = Number(localStorage.getItem("rate"))
-    } catch {
-        rate = 0
-    }
-    document.getElementById("rate_area").innerHTML = `レート：${rate}`
     random_hand()
     view_p1_hand()
     view_p2_hand()
     turn = Math.random()>=0.5 ? "p1" : "p2"
     if (turn == "p1") {p1_action()}
-})
-
-function recordGameData(action,cards) {
-    const dataEntry = {
-        p1_point: p1_point
-    }
-    collectedData.push(dataEntry)
-}
-
-function downloadGameData() {
-    const jsonData = JSON.stringify(collectedData, null, 2)
-    const blob = new Blob([jsonData], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "point.json"
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-}
-
-document.getElementById("dataDownload").addEventListener("click", function () {
-    downloadGameData()
 })
 
 async function checkRon(droppedCard) {
