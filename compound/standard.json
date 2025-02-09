@@ -1559,6 +1559,18 @@
             "advantageous": [
             ],
             "number": 102
+        },
+        {
+            "name": "水素化銅",
+            "formula": "CuH",
+            "point": 30,
+            "components": {
+                "Cu": 1,
+                "H": 1
+            },
+            "advantageous": [
+            ],
+            "number": 103
         }
     ]
 }
