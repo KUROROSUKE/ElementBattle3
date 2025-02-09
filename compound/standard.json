@@ -1547,6 +1547,18 @@
             "advantageous": [
             ],
             "number": 101
+        },
+        {
+            "name": "水素化マグネシウム",
+            "formula": "MgH₂",
+            "point": 35,
+            "components": {
+                "Mg": 1,
+                "H": 2
+            },
+            "advantageous": [
+            ],
+            "number": 102
         }
     ]
 }
