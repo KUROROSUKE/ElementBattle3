@@ -1535,6 +1535,18 @@
             "advantageous": [
             ],
             "number": 100
+        },
+        {
+            "name": "水素化カリウム",
+            "formula": "KH",
+            "point": 30,
+            "components": {
+                "K": 1,
+                "H": 1
+            },
+            "advantageous": [
+            ],
+            "number": 101
         }
     ]
 }
