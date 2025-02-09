@@ -1523,6 +1523,18 @@
             "advantageous": [
             ],
             "number": 99
+        },
+        {
+            "name": "アセチレン",
+            "formula": "C₂H₂",
+            "point": 25,
+            "components": {
+                "C": 2,
+                "H": 2
+            },
+            "advantageous": [
+            ],
+            "number": 100
         }
     ]
 }
