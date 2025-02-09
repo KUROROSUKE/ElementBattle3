@@ -12,7 +12,7 @@
         }
         #p2_area {
             text-align: center;
-        }
+        }        
         .buttons {
             width: 250px;
             height:60px;
@@ -29,7 +29,7 @@
         .drop_area {
             left:10%;
             position:relative;
-            width: 75%;
+            width: 80%;
         }
         #startScreen {
             position: fixed;
@@ -77,6 +77,10 @@
                 left: 50%;
                 width: 80%
             }
+            #inquiry {
+                display: block;
+                width:80%
+            }
         }
         input[type="number"]{
             width: 100%;
@@ -112,7 +116,7 @@
         <div id="p1_hand"></div>
     </div>
     <div id="dropped_area_p1" class="drop_area" style="display: none;"></div>
-    <hr style="border: 2px solid black; margin: 20px 0; display: none;">
+    <hr style="border: 2px solid black; width:90%">
     <div id="dropped_area_p2" class="drop_area" style="display: none;"></div>
     <div id="p2_area" style="display: none;">
         <div id="p2_hand"></div>
@@ -132,7 +136,7 @@
             <button onclick="closeWinSettings()" style="padding: 10px 20px; font-size: 1.2em; width: 45%;">取消</button>
         </div>
         <hr>
-        <a href="https://forms.gle/6sKpeCiFVbJMErLj9" style="font-size: 8%;">「元素ゲーム」問い合わせフォーム</a>
+        <a href="https://forms.gle/6sKpeCiFVbJMErLj9" id="inquiry">「元素ゲーム」問い合わせフォーム</a>
     </div>
     <button id="gameRuleButton" onclick="showRules()">ゲームルール</button>
     <script>
