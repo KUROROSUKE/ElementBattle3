@@ -15,9 +15,9 @@ let p1_is_acting = false
 
 const WindowSize = window.innerWidth
 const elementToNumber = {"H": 1, "He": 2, "Li": 3, "Be": 4, "B": 5, "C": 6, "N": 7, "O": 8, "F": 9, "Ne": 10,"Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Cl": 17, "Ar": 18, "K": 19, "Ca": 20,"Fe": 26, "Cu": 29, "Zn": 30, "I": 53}
-const elements = [...Array(15).fill('H'), ...Array(10).fill('O'), ...Array(10).fill('C'),'He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
+const elements = [...Array(6).fill('H'), ...Array(4).fill('O'), ...Array(4).fill('C'),'He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
 const element = ['H','O','C','He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
-let deck = [...elements, ...elements, ...elements]
+let deck = [...elements, ...elements]
 
 //　load materials
 async function loadMaterials() {
@@ -38,7 +38,7 @@ async function view_p2_hand() {
         const image = document.createElement("img")
         image.src = `../images/${elementToNumber[elem]}.png`
         image.alt = elem
-        image.style.width = `${WindowSize/12}px`
+        image.style.width = `${WindowSize/15}px`
         image.style.padding = "10px"
         image.style.margin = "5px"
         image.style.border = "1px solid #000"
@@ -70,7 +70,7 @@ async function view_p2_hand() {
                 let newElem = drawCard()
                 this.src = `../images/${elementToNumber[newElem]}.png`
                 this.alt = newElem
-                this.style.width = `${WindowSize/12}px`
+                this.style.width = `${WindowSize/15}px`
                 this.style.padding = "10px"
                 this.style.margin = "5px"
                 this.style.border = "1px solid #000"
@@ -89,7 +89,7 @@ async function view_p1_hand() {
         const image = document.createElement("img")
         image.src = `../images/0.png`
         image.alt = elem
-        image.style.width = `${WindowSize/12}px`
+        image.style.width = `${WindowSize/15}px`
         image.style.padding = "10px"
         image.style.margin = "5px"
         image.style.border = "1px solid #000"
@@ -216,7 +216,12 @@ async function done(who, isRon = false) {
         console.log("次のゲーム");
         numTurn += 1;
         button.textContent = "次のゲーム";
-        button.addEventListener("click", function () { resetGame();button.style.display = "none"});
+        button.addEventListener("click", function () {
+            resetGame();
+            button.style.display = "none"
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+        });
     } else {
         console.log("ゲーム終了");
         button.textContent = "ラウンド終了";
@@ -227,6 +232,8 @@ async function done(who, isRon = false) {
             numTurn = 0;
             resetGame();
             button.style.display = "none"
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
         });
     }
 }
@@ -262,7 +269,7 @@ async function p1_exchange(targetElem) {
     // Update the image element's appearance
     img.src = `../images/0.png`
     img.alt = newElem
-    img.style.width = `${WindowSize / 12}px`
+    img.style.width = `${WindowSize / 15}px`
     img.style.padding = "10px"
     img.style.margin = "5px"
     img.style.border = "1px solid #000"
@@ -414,7 +421,7 @@ function resetGame() {
     document.getElementById("done_button").style.display = "none";
     document.getElementById("nextButton").style.display = "none";
 
-    deck = [...elements, ...elements, ...elements];
+    deck = [...elements, ...elements];
     deck = shuffle(deck);
 
     const p1_hand_element = document.getElementById("p1_hand");
@@ -437,7 +444,7 @@ function resetGame() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    deck = [...elements, ...elements, ...elements]
+    deck = [...elements, ...elements]
     deck = shuffle(deck)
     random_hand()
     view_p1_hand()
