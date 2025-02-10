@@ -18,6 +18,8 @@ const elementToNumber = {"H": 1, "He": 2, "Li": 3, "Be": 4, "B": 5, "C": 6, "N":
 const elements = [...Array(6).fill('H'), ...Array(4).fill('O'), ...Array(4).fill('C'),'He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
 const element = ['H','O','C','He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
 let deck = [...elements, ...elements]
+let materials = []
+let imageCache = {}
 
 //　load materials
 async function loadMaterials() {
@@ -28,7 +30,6 @@ async function loadMaterials() {
     }
     return data.material
 }
-const materials = loadMaterials()
 
 
 // main code
@@ -36,7 +37,7 @@ async function view_p2_hand() {
     const area = document.getElementById('p2_hand')
     p2_hand.forEach((elem, index) => {
         const image = document.createElement("img")
-        image.src = `../images/${elementToNumber[elem]}.png`
+        image.src = imageCache[elementToNumber[elem]].src
         image.alt = elem
         image.style.width = `${WindowSize/15}px`
         image.style.padding = "10px"
@@ -61,14 +62,14 @@ async function view_p2_hand() {
                 dropped_cards_p2.push(this.alt)
                 const img = document.createElement("img")
                 img.alt = this.alt
-                img.src=`../images/${elementToNumber[this.alt]}.png`
+                img.src = imageCache[elementToNumber[this.alt]].src
                 img.style.width = `${WindowSize/24}px`
                 img.style.border = "1px solid #000"
                 document.getElementById("dropped_area_p2").appendChild(img)
                 this.classList.remove("selected")
                 this.classList.add("selected")
                 let newElem = drawCard()
-                this.src = `../images/${elementToNumber[newElem]}.png`
+                this.src = imageCache[elementToNumber[newElem]].src
                 this.alt = newElem
                 this.style.width = `${WindowSize/15}px`
                 this.style.padding = "10px"
@@ -87,7 +88,7 @@ async function view_p1_hand() {
     const area = document.getElementById('p1_hand')
     p1_hand.forEach((elem, index) => {
         const image = document.createElement("img")
-        image.src = `../images/0.png`
+        image.src = imageCache[0].src
         image.alt = elem
         image.style.width = `${WindowSize/15}px`
         image.style.padding = "10px"
@@ -99,7 +100,6 @@ async function view_p1_hand() {
 }
 
 async function search(components) {
-    const materials = await loadMaterials();
     return materials.find(material => {
         for (const element in components) {
             if (!material.components[element] || material.components[element] !== components[element]) {
@@ -253,7 +253,7 @@ async function p1_exchange(targetElem) {
     }
     // Create a new image for the dropped card area
     const newImg = document.createElement("img")
-    newImg.src = `../images/${elementToNumber[p1_hand[targetElem]]}.png`
+    newImg.src = imageCache[elementToNumber[p1_hand[targetElem]]].src
     newImg.style.width = `${WindowSize / 24}px`
     newImg.style.border = "1px solid #000"
     document.getElementById("dropped_area_p1").appendChild(newImg)
@@ -267,7 +267,7 @@ async function p1_exchange(targetElem) {
     const newElem = drawCard()
     p1_hand[targetElem] = newElem
     // Update the image element's appearance
-    img.src = `../images/0.png`
+    img.src = imageCache[0].src
     img.alt = newElem
     img.style.width = `${WindowSize / 15}px`
     img.style.padding = "10px"
@@ -286,9 +286,6 @@ async function p1_action() {
         return;  // すでに行動中なら何もしない
     }
     p1_is_acting = true;  // 行動開始
-
-    // Load materials data
-    const materials = await loadMaterials();
     
     // フィルタリング
     const highPointMaterials = materials.filter(material => material.point > 50);
@@ -373,7 +370,6 @@ function drawCard() {
 }
 
 async function search_materials(components) {
-    const materials = await loadMaterials()
     return materials.filter(material => {
         for (const element in material.components) {
             if (!components[element] || material.components[element] > components[element]) {
@@ -444,20 +440,24 @@ function resetGame() {
 }
 
 function preloadImages() {
-    let imageCache = [];
     let imageNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 26, 29, 30, 53];
 
     imageNumbers.forEach(num => {
         let img = new Image();
         img.src = `../images/${num}.png`;
-        imageCache.push(img);
+        imageCache[num] = img; // キャッシュに保存
     });
 
-    console.log("画像プリロード完了");
+    console.log("画像プリロード完了", imageCache);
+}
+
+async function init_json() {
+    materials = await loadMaterials()
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     preloadImages()
+    init_json()
     deck = [...elements, ...elements]
     deck = shuffle(deck)
     random_hand()
@@ -570,7 +570,6 @@ function closeWinSettings() {
 }
 
 async function findMostPointMaterial() {
-    const materials = await loadMaterials();  // 物質データを取得
     const possibleMaterials = await search_materials(arrayToObj(p2_hand)); // p2_hand で作れる物質を検索
     
     if (possibleMaterials.length === 0) {
