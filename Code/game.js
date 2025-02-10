@@ -13,7 +13,6 @@ let time = "game"
 let numTurn = 1
 let p1_is_acting = false
 
-const WindowSize = window.innerWidth
 const elementToNumber = {"H": 1, "He": 2, "Li": 3, "Be": 4, "B": 5, "C": 6, "N": 7, "O": 8, "F": 9, "Ne": 10,"Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Cl": 17, "Ar": 18, "K": 19, "Ca": 20,"Fe": 26, "Cu": 29, "Zn": 30, "I": 53}
 const elements = [...Array(6).fill('H'), ...Array(4).fill('O'), ...Array(4).fill('C'),'He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
 const element = ['H','O','C','He', 'Li', 'Be', 'B', 'N', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca','Fe', 'Cu', 'Zn', 'I']
@@ -39,9 +38,7 @@ async function view_p2_hand() {
         const image = document.createElement("img")
         image.src = imageCache[elementToNumber[elem]].src
         image.alt = elem
-        image.style.width = `${WindowSize/15}px`
         image.style.padding = "10px"
-        image.style.margin = "5px"
         image.style.border = "1px solid #000"
         image.classList.add("selected")
         image.addEventListener("click", function() {
@@ -63,7 +60,6 @@ async function view_p2_hand() {
                 const img = document.createElement("img")
                 img.alt = this.alt
                 img.src = imageCache[elementToNumber[this.alt]].src
-                img.style.width = `${WindowSize/24}px`
                 img.style.border = "1px solid #000"
                 document.getElementById("dropped_area_p2").appendChild(img)
                 this.classList.remove("selected")
@@ -71,9 +67,7 @@ async function view_p2_hand() {
                 let newElem = drawCard()
                 this.src = imageCache[elementToNumber[newElem]].src
                 this.alt = newElem
-                this.style.width = `${WindowSize/15}px`
                 this.style.padding = "10px"
-                this.style.margin = "5px"
                 this.style.border = "1px solid #000"
                 p2_hand[index] = newElem
                 turn = "p1"
@@ -90,9 +84,7 @@ async function view_p1_hand() {
         const image = document.createElement("img")
         image.src = imageCache[0].src
         image.alt = "相手の手札"
-        image.style.width = `${WindowSize/15}px`
         image.style.padding = "10px"
-        image.style.margin = "5px"
         image.style.border = "1px solid #000"
         image.classList.add("selected")
         area.appendChild(image)
@@ -259,7 +251,6 @@ async function p1_exchange(targetElem) {
     // Create a new image for the dropped card area
     const newImg = document.createElement("img")
     newImg.src = imageCache[elementToNumber[p1_hand[targetElem]]].src
-    newImg.style.width = `${WindowSize / 24}px`
     newImg.style.border = "1px solid #000"
     document.getElementById("dropped_area_p1").appendChild(newImg)
     // Update the player's hand with a new element
@@ -274,9 +265,7 @@ async function p1_exchange(targetElem) {
     // Update the image element's appearance
     img.src = imageCache[0].src
     img.alt = newElem
-    img.style.width = `${WindowSize / 15}px`
     img.style.padding = "10px"
-    img.style.margin = "5px"
     img.style.border = "1px solid #000"
     // Remove and reapply the 'selected' class to reset the state
     img.classList.remove("selected")
