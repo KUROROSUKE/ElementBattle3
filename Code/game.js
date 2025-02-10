@@ -89,7 +89,7 @@ async function view_p1_hand() {
     p1_hand.forEach((elem, index) => {
         const image = document.createElement("img")
         image.src = imageCache[0].src
-        image.alt = elem
+        image.alt = "相手の手札"
         image.style.width = `${WindowSize/15}px`
         image.style.padding = "10px"
         image.style.margin = "5px"
@@ -145,14 +145,19 @@ async function p2_make() {
     const button = document.getElementById("done_button");
     button.style.display = "inline";
 
+    // 以前のイベントリスナーを削除
+    button.replaceWith(button.cloneNode(true));
+    const newButton = document.getElementById("done_button");
+
     // ボタンクリックを待機
     return new Promise((resolve) => {
-        button.addEventListener("click", function () {
+        newButton.addEventListener("click", function () {
             const p2_make_material = search(arrayToObj(p2_selected_card));
-            resolve(p2_make_material)
+            resolve(p2_make_material);
         });
     });
 }
+
 
 async function get_dora() {
     return element[Math.round(Math.random()*23)]
