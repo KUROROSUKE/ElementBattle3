@@ -55,6 +55,7 @@
             border: 2px solid black;
             border-radius: 10px;
         }
+        /* 設定 */
         #setting_icon {
             position: absolute;
             height: 6%;
@@ -73,6 +74,44 @@
             border: 1px solid black;
             z-index: 102;
         }
+        /* ルール説明 */
+        .modal {
+            display: flex;
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center; /* 画面中央に配置 */
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            width: 80%;
+            max-width: 60%;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* 画面の中央に配置 */
+        }
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .modal-body {
+        text-align: left;
+        padding-left: 20px;  /* 左に余白を入れる */
+        font-size: 16px;
+        line-height: 1.6;
+        }
         @media screen and (max-width: 480px) {
             #winSettingsModal {
                 left: 50%;
@@ -81,6 +120,9 @@
             #inquiry {
                 display: block;
                 width:80%
+            }
+            .modal-content {
+                max-width: 100%;
             }
         }
         input[type="number"]{
@@ -140,6 +182,17 @@
         <a href="https://forms.gle/6sKpeCiFVbJMErLj9" id="inquiry">「元素ゲーム」問い合わせフォーム</a>
     </div>
     <button id="gameRuleButton" onclick="showRules()">ゲームルール</button>
+    <div id="rulesModal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">ゲームルール</h2>
+            <div class="modal-body">
+                <p>1. 手札の元素を使って化合物を作ろう！</p>
+                <p>2. 交換したい場合は、クリックしてカードを捨てよう。</p>
+                <p>3. 生成できる化合物があれば、「ツモ」または「ロン」ボタンを押して作ろう！</p>
+                <p>4. 相手と250ポイント以上の差がつくか、10ゲームが終わった時点でポイントの多い方が勝利！</p>
+            </div>
+        </div>
+    </div>
     <script>
         function returnToStartScreen() {
             document.getElementById("startScreen").style.display = "flex";
