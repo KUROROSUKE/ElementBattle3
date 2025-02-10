@@ -452,8 +452,6 @@ function preloadImages() {
         img.src = `../images/${num}.png`;
         imageCache[num] = img;
     });
-
-    console.log("画像プリロード完了", imageCache);
 }
 
 async function init_json() {
@@ -515,15 +513,6 @@ function updateGeneratedMaterials(materialName) {
     localStorage.setItem("generatedMaterials", JSON.stringify(generatedMaterials));
 }
 
-//ルール表示
-function showRules() {
-    document.getElementById("rulesModal").style.display = "block";
-}
-window.onclick = function(event) {
-    if (event.target == document.getElementById("rulesModal")) {
-        document.getElementById("rulesModal").style.display = "none";
-    }
-}
 
 //設定画面
 function openWinSettings() {
