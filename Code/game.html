@@ -128,14 +128,14 @@
             color: red;
         }
         #p1_hand, #p2_hand {
-            display: grid;
+            display: block;
             grid-template-columns: repeat(8, 1fr); /* 8枚を等間隔で配置 */
             justify-content: center;
         }
         #p1_hand img, #p2_hand img {
-            margin: 5px;
+            gap: 5px;
             text-align: center;
-            width: 65%;
+            width: calc(100%/8 - 15px);
         }
         @media screen and (max-width: 480px) {
             #winSettingsModal {
