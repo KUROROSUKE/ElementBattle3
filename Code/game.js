@@ -88,6 +88,7 @@ async function view_p1_hand() {
     p1_hand.forEach((elem, index) => {
         const image = document.createElement("img")
         image.src = `../images/0.png`
+        image.alt = elem
         image.style.width = `${WindowSize/15}px`
         image.style.padding = "10px"
         image.style.margin = "5px"
@@ -442,7 +443,21 @@ function resetGame() {
     }
 }
 
+function preloadImages() {
+    let imageCache = [];
+    let imageNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 26, 29, 30, 53];
+
+    imageNumbers.forEach(num => {
+        let img = new Image();
+        img.src = `../images/${num}.png`;
+        imageCache.push(img);
+    });
+
+    console.log("画像プリロード完了");
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+    preloadImages()
     deck = [...elements, ...elements]
     deck = shuffle(deck)
     random_hand()
