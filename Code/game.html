@@ -32,6 +32,9 @@
             position:relative;
             width: 80%;
         }
+        .drop_area img {
+            width:calc(100% / 25)
+        }
         #startScreen {
             position: fixed;
             top: 0;
@@ -121,9 +124,19 @@
             font-weight: bold;
             cursor: pointer;
         }
-    
         .close:hover {
             color: red;
+        }
+        #p1_hand, #p2_hand {
+            display:flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        #p1_hand img, #p2_hand img {
+            width: calc(100% / 12); /* 8枚均等配置 */
+            height: auto;
+            margin: 5px;
         }
         @media screen and (max-width: 480px) {
             #winSettingsModal {
@@ -136,6 +149,16 @@
             }
             .modal-content {
                 max-width: 100%;
+            }
+            #p1_hand img, #p2_hand img {
+                width: calc(100% / 7); /* 4枚均等配置 */
+                margin: 2px;
+            }
+            .drop_area img{
+                width:calc(100%/10)
+            }
+            .buttons {
+                width: 45%;
             }
         }
         input[type="number"]{
