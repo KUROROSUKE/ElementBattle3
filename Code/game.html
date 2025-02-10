@@ -128,15 +128,14 @@
             color: red;
         }
         #p1_hand, #p2_hand {
-            display:flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr); /* 8枚を等間隔で配置 */
             justify-content: center;
-            gap: 10px;
         }
         #p1_hand img, #p2_hand img {
-            width: calc(100% / 12); /* 8枚均等配置 */
-            height: auto;
             margin: 5px;
+            text-align: center;
+            width: 65%;
         }
         @media screen and (max-width: 480px) {
             #winSettingsModal {
@@ -150,12 +149,8 @@
             .modal-content {
                 max-width: 100%;
             }
-            #p1_hand img, #p2_hand img {
-                width: calc(100% / 7); /* 4枚均等配置 */
-                margin: 2px;
-            }
             .drop_area img{
-                width:calc(100%/10)
+                width:calc(7%)
             }
             .buttons {
                 width: 45%;
