@@ -38,7 +38,7 @@ async function view_p2_hand() {
         const image = document.createElement("img")
         image.src = imageCache[elementToNumber[elem]].src
         image.alt = elem
-        image.style.padding = "10px"
+        image.style.padding = "5px"
         image.style.border = "1px solid #000"
         image.classList.add("selected")
         image.addEventListener("click", function() {
@@ -48,11 +48,11 @@ async function view_p2_hand() {
                 this.classList.toggle("selected")
                 if (this.classList.contains("selected")){
                     this.style.border = "1px solid #000"
-                    this.style.padding = "10px"
+                    this.style.padding = "5px"
                     p2_selected_card.splice(p2_selected_card.indexOf(this.alt),1)
                 } else {
                     this.style.border = "5px solid #F00"
-                    this.style.padding = "6px"
+                    this.style.padding = "1px"
                     p2_selected_card.push(this.alt)
                 }}
             if (turn == "p2" && time == "game") {
@@ -67,7 +67,7 @@ async function view_p2_hand() {
                 let newElem = drawCard()
                 this.src = imageCache[elementToNumber[newElem]].src
                 this.alt = newElem
-                this.style.padding = "10px"
+                this.style.padding = "5px"
                 this.style.border = "1px solid #000"
                 p2_hand[index] = newElem
                 turn = "p1"
@@ -84,7 +84,7 @@ async function view_p1_hand() {
         const image = document.createElement("img")
         image.src = imageCache[0].src
         image.alt = "相手の手札"
-        image.style.padding = "10px"
+        image.style.padding = "5px"
         image.style.border = "1px solid #000"
         image.classList.add("selected")
         area.appendChild(image)
@@ -265,7 +265,7 @@ async function p1_exchange(targetElem) {
     // Update the image element's appearance
     img.src = imageCache[0].src
     img.alt = newElem
-    img.style.padding = "10px"
+    img.style.padding = "5px"
     img.style.border = "1px solid #000"
     // Remove and reapply the 'selected' class to reset the state
     img.classList.remove("selected")
