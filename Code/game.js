@@ -166,7 +166,7 @@ async function get_dora() {
 async function done(who, isRon = false) {
     const p2_make_material = await p2_make();
     const p1_make_material = await p1_make();
-    
+
     dora = await get_dora();
     console.log(`ドラ: ${dora}`);
     
@@ -333,8 +333,8 @@ async function p1_action() {
         }
     }
     
-    turn = "p2";  // `p1_action` が終了したらターンを `p2` に移す
-    p1_is_acting = false;  // 行動終了
+    turn = "p2";
+    p1_is_acting = false;
 }
 
 
@@ -383,7 +383,7 @@ async function search_materials(components) {
         }
         return true
     })
-} // この関数は特徴量として使えそうかも
+}
 
 function random_hand() {
     for (let i = 0; i < card_num; i++) {
@@ -440,7 +440,7 @@ function resetGame() {
     view_p2_hand();
 
     if (turn === "p1") {
-        setTimeout(() => p1_action(), 500);  // `setTimeout` で 1回だけ `p1_action()` を実行
+        setTimeout(() => p1_action(), 500);
     }
 }
 
@@ -450,7 +450,7 @@ function preloadImages() {
     imageNumbers.forEach(num => {
         let img = new Image();
         img.src = `../images/${num}.png`;
-        imageCache[num] = img; // キャッシュに保存
+        imageCache[num] = img;
     });
 
     console.log("画像プリロード完了", imageCache);
@@ -460,17 +460,7 @@ async function init_json() {
     materials = await loadMaterials()
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    preloadImages()
-    init_json()
-    deck = [...elements, ...elements]
-    deck = shuffle(deck)
-    random_hand()
-    view_p1_hand()
-    view_p2_hand()
-    turn = Math.random()>=0.5 ? "p1" : "p2"
-    if (turn == "p1") {p1_action()}
-})
+
 
 async function checkRon(droppedCard) {
     // P2のロン判定
@@ -478,7 +468,7 @@ async function checkRon(droppedCard) {
     if (possibleMaterialsP2.length > 0) {
         const ronButton = document.getElementById("ron_button");
         ronButton.style.display = "inline";
-        ronButton.replaceWith(ronButton.cloneNode(true));  // 古いイベントリスナーを削除
+        ronButton.replaceWith(ronButton.cloneNode(true));
         const newRonButton = document.getElementById("ron_button");
 
         newRonButton.addEventListener("click", function () {
@@ -525,28 +515,20 @@ function updateGeneratedMaterials(materialName) {
     localStorage.setItem("generatedMaterials", JSON.stringify(generatedMaterials));
 }
 
+//ルール表示
 function showRules() {
-    alert("【ゲームの遊び方】\n" +
-        "1. 手札の元素を使って化合物を作ろう！\n" +
-        "2. 交換したい場合は、クリックしてカードを捨てよう。\n" +
-        "3. 生成できる化合物があれば、「ツモ」または「ロン」ボタンを押して作ろう！\n" +
-        "4. 相手と250ポイント以上の差がつくか、10ゲームが終わった時点でポイントの多い方が勝利！\n" +
-        "【補足説明】\n" + 
-        "「ツモ」は自分の手札だけで化合物を作成すること、「ロン」は相手が最後に捨てたカードも利用して化合物を作成すること。\n" + 
-        "ドラも実装されています。（ドラのカードが含まれていたらポイント1.5倍）\n" + 
-        "勝利条件のポイント差やゲーム数は、設定（右下）から変えられる。");
+    document.getElementById("rulesModal").style.display = "block";
+}
+window.onclick = function(event) {
+    if (event.target == document.getElementById("rulesModal")) {
+        document.getElementById("rulesModal").style.display = "none";
+    }
 }
 
-document.getElementById("setting_icon").addEventListener("click", function() {
-    document.getElementById("winSettingsModal").style.display = "inline"
-})
-
-// クリック時にモーダルを表示
+//設定画面
 function openWinSettings() {
     document.getElementById("winSettingsModal").style.display = "block";
 }
-
-// 入力された値を取得し変数に設定
 function saveWinSettings() {
     let winPointInput = parseInt(document.getElementById("winPointInput").value, 10);
     let winTurnInput = parseInt(document.getElementById("winTurnInput").value, 10);
@@ -568,14 +550,17 @@ function saveWinSettings() {
     WIN_TURN = winTurnInput;
     closeWinSettings();
 }
-
-// モーダルを閉じる
 function closeWinSettings() {
     document.getElementById("winSettingsModal").style.display = "none";
 }
+document.getElementById("setting_icon").addEventListener("click", function() {
+    document.getElementById("winSettingsModal").style.display = "inline"
+})
 
+
+//ヒント
 async function findMostPointMaterial() {
-    const possibleMaterials = await search_materials(arrayToObj(p2_hand)); // p2_hand で作れる物質を検索
+    const possibleMaterials = await search_materials(arrayToObj(p2_hand));
     
     if (possibleMaterials.length === 0) {
         console.log("p2_hand 内で作成可能な物質はありません。");
@@ -590,7 +575,19 @@ let lastTouchEnd = 0;
 document.addEventListener('touchend', function (event) {
     let now = Date.now();
     if (now - lastTouchEnd <= 300) {
-        event.preventDefault();  // ダブルタップを無効化
+        event.preventDefault();
     }
     lastTouchEnd = now;
 }, false);
+
+document.addEventListener('DOMContentLoaded', function () {
+    preloadImages()
+    init_json()
+    deck = [...elements, ...elements]
+    deck = shuffle(deck)
+    random_hand()
+    view_p1_hand()
+    view_p2_hand()
+    turn = Math.random()>=0.5 ? "p1" : "p2"
+    if (turn == "p1") {p1_action()}
+})
