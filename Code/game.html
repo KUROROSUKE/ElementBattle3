@@ -112,9 +112,18 @@
         font-size: 16px;
         line-height: 1.6;
         }
-        #closeRulesButton {
-            width: 40%;
-            height: 20;
+        /* ✕ボタンのスタイル */
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    
+        .close:hover {
+            color: red;
         }
         @media screen and (max-width: 480px) {
             #winSettingsModal {
@@ -189,6 +198,7 @@
     <!-- ルール説明モーダル -->
     <div id="rulesModal" class="modal">
         <div class="modal-content">
+            <span id="closeRulesButton" class="close">&times;</span>
             <h2 class="modal-title">ゲームルール</h2>
             <div class="modal-body">
                 <p>1. 手札の元素を使って化合物を作ろう！</p>
@@ -196,7 +206,6 @@
                 <p>3. 生成できる化合物があれば、「ツモ」または「ロン」ボタンを押して作ろう！</p>
                 <p>4. 相手と250ポイント以上の差がつくか、10ゲームが終わった時点でポイントの多い方が勝利！</p>
             </div>
-            <button id="closeRulesButton">閉じる</button>
         </div>
     </div>
 
@@ -204,14 +213,14 @@
         function showRules() {
             document.getElementById("rulesModal").style.display = "block";
         }
-
+    
         function closeRules() {
             document.getElementById("rulesModal").style.display = "none";
         }
-
+    
         document.getElementById("closeRulesButton").addEventListener("click", closeRules);
-
-        // 画面の外側をクリックした場合に閉じる処理
+    
+        // モーダル外をクリックした場合に閉じる
         window.onclick = function(event) {
             const modal = document.getElementById("rulesModal");
             if (event.target === modal) {
