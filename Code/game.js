@@ -438,7 +438,7 @@ function preloadImages() {
 
     imageNumbers.forEach(num => {
         let img = new Image();
-        img.src = `../images/${num}.png`;
+        img.src = `../images/${num}.webp`;
         imageCache[num] = img;
     });
 }
