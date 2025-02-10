@@ -88,7 +88,6 @@ async function view_p1_hand() {
     p1_hand.forEach((elem, index) => {
         const image = document.createElement("img")
         image.src = `../images/0.png`
-        image.alt = elem
         image.style.width = `${WindowSize/15}px`
         image.style.padding = "10px"
         image.style.margin = "5px"
