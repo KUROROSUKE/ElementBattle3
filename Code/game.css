@@ -158,8 +158,8 @@ input[type="number"]{
 }
 #gameRuleButton {
     position: fixed;
-    top: 10px;  /* 画面上部から10pxの位置に */
-    right: 10px;  /* 画面右端から10pxの位置に */
+    bottom: 10px;  /* 画面上部から10pxの位置に */
+    left: 10px;  /* 画面右端から10pxの位置に */
     padding: 10px 20px;
     font-size: 16px;
     background-color: white;
