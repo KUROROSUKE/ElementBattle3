@@ -560,3 +560,39 @@ document.addEventListener('DOMContentLoaded', function () {
     turn = Math.random()>=0.5 ? "p1" : "p2"
     if (turn == "p1") {p1_action()}
 })
+
+function returnToStartScreen() {
+    document.getElementById("startScreen").style.display = "flex";
+    document.getElementById("p1_area").style.display = "none";
+    document.getElementById("dropped_area_p1").style.display = "none";
+    document.getElementById("dropped_area_p2").style.display = "none";
+    document.getElementById("p2_area").style.display = "none";
+    document.getElementById("gameRuleButton").style.display = "block";
+}
+document.getElementById("startButton").addEventListener("click", function() {
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("p1_area").style.display = "block";
+    document.getElementById("dropped_area_p1").style.display = "block";
+    document.getElementById("dropped_area_p2").style.display = "block";
+    document.getElementById("p2_area").style.display = "block";
+    document.getElementById("gameRuleButton").style.display = "none";
+});
+
+
+function showRules() {
+    document.getElementById("rulesModal").style.display = "block";
+}
+
+function closeRules() {
+    document.getElementById("rulesModal").style.display = "none";
+}
+
+document.getElementById("closeRulesButton").addEventListener("click", closeRules);
+
+// モーダル外をクリックした場合に閉じる
+window.onclick = function(event) {
+    const modal = document.getElementById("rulesModal");
+    if (event.target === modal) {
+        closeRules();
+    }
+};
