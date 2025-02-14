@@ -1571,6 +1571,19 @@
             "advantageous": [
             ],
             "number": 103
+        },
+        {
+            "name": "水酸化銅（II）",
+            "formula": "Cu(OH)₂",
+            "point": 75,
+            "components": {
+                "Cu": 1,
+                "H": 2,
+                "O": 2
+            },
+            "advantageous": [
+            ],
+            "number": 104
         }
     ]
 }
