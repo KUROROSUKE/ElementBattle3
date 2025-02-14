@@ -515,8 +515,8 @@ function saveWinSettings() {
         alert("WIN_POINT は 1 以上の数値を入力してください。");
         return;
     }
-    if (isNaN(winPointInput) || winPointInput > 999) {
-        alert("WIN_POINT の最大値は 999 です。");
+    if (isNaN(winPointInput) || winPointInput > 999999) {
+        alert("WIN_POINT の最大値は 999999 です。");
         return;
     }
     if (isNaN(winTurnInput) || winTurnInput < 1) {
