@@ -452,7 +452,8 @@ async function init_json() {
 async function checkRon(droppedCard) {
     // P2のロン判定
     const possibleMaterialsP2 = await search_materials(arrayToObj([...p2_hand, droppedCard]));
-    if (possibleMaterialsP2.length > 0) {
+    const validMaterialsP2 = possibleMaterialsP2.filter(material => material.components[droppedCard]);
+    if (validMaterialsP2.length > 0) {
         const ronButton = document.getElementById("ron_button");
         ronButton.style.display = "inline";
         ronButton.replaceWith(ronButton.cloneNode(true));
@@ -462,24 +463,25 @@ async function checkRon(droppedCard) {
             newRonButton.style.display = "none";
             p2_selected_card = [droppedCard];
             time = "make";
+            // 捨て牌一覧の最後の要素を取得し、赤枠を付ける
+            const DroppedCards = document.getElementById("dropped_area_p1").children
+            const lastDiscard = DroppedCards[DroppedCards.length - 1]
+            lastDiscard.style.border = "2px solid red";
             done("p2", true);
         });
     }
 
     // P1のロン判定（捨てられたカードを含める）
     const possibleMaterialsP1 = await search_materials(arrayToObj([...p1_hand, droppedCard]));
-    const highPointMaterialsP1 = possibleMaterialsP1.filter(material => material.point >= 70);
+    const validMaterialsP1 = possibleMaterialsP1.filter(material => ((material.point >= 70) && material.components[droppedCard]));
 
-    if (highPointMaterialsP1.length > 0) {
+    if (validMaterialsP1.length > 0) {
         // **P1の手札に捨てたカードがもうない可能性があるため、戻す**
         p1_hand.push(droppedCard);
-        
         // P1のロン処理のため、ロンに使うカードを選択
         p1_selected_card = [droppedCard];
-
         // `time` を "make" に変更
         time = "make";
-
         // P1のロン処理を実行
         done("p1", true);
     }
@@ -515,8 +517,8 @@ function saveWinSettings() {
         alert("WIN_POINT は 1 以上の数値を入力してください。");
         return;
     }
-    if (isNaN(winPointInput) || winPointInput > 999999) {
-        alert("WIN_POINT の最大値は 999999 です。");
+    if (isNaN(winPointInput) || winPointInput > 999) {
+        alert("WIN_POINT の最大値は 999 です。");
         return;
     }
     if (isNaN(winTurnInput) || winTurnInput < 1) {
