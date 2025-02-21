@@ -282,7 +282,7 @@ async function p1_action() {
     p1_is_acting = true;  // 行動開始
     
     // フィルタリング
-    const highPointMaterials = materials.filter(material => material.point > 50);
+    const highPointMaterials = materials.filter(material => material.point > 20);
     
     // 最適な物質を選択
     const sortedMaterials = highPointMaterials.sort((a, b) => {
@@ -304,7 +304,7 @@ async function p1_action() {
             }
         }
 
-        if (canMake && targetMaterial.point > 50) {
+        if (canMake && targetMaterial.point > 20) {
             time = "make";
             await done("p1");
         } else {
