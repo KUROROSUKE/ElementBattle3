@@ -36,9 +36,10 @@
 /* 設定 */
 #setting_icon {
     position: absolute;
-    height: 6vh;
-    right: 5vw;
-    bottom: 5vh;
+    width: 6vh;
+    right: 5%;
+    bottom: 5%;
+    padding: 5px 20px;
     z-index: 101;
 }
 #winSettingsModal {
