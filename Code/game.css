@@ -3,10 +3,10 @@
 }
 #p2_area {
     text-align: center;
-}        
+}
 .buttons {
-    width: 250px;
-    height:60px;
+    width: 20vw;
+    height:10vh;
 }
 #nextButton {
     display: none;
@@ -36,9 +36,9 @@
 /* 設定 */
 #setting_icon {
     position: absolute;
-    height: 6%;
-    right: 5%;
-    bottom: 5%;
+    height: 6vh;
+    right: 5vw;
+    bottom: 5vh;
     z-index: 101;
 }
 #winSettingsModal {
