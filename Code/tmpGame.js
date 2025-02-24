@@ -20,8 +20,8 @@ let deck = [...elements, ...elements]
 let materials = []
 let imageCache = {}
 
-p2_generated_materials = []
-
+p2_generated_materials = [];
+p2_drop = [];
 
 //　load materials
 async function loadMaterials() {
